@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Velqora — Logowanie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#05060a;--bg2:#080a10;--bg3:#0d1018;--a:#4f7fff;--a2:#7b5fff;--teal:#2dd4bf;--tx:#eef0f6;--mu:#5a6080;--br:rgba(79,127,255,.14);--red:#ef4444;--green:#22c55e}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;overflow:hidden}
+
+/* BG MESH */
+.mesh{position:fixed;inset:0;pointer-events:none;z-index:0}
+.blob{position:absolute;border-radius:50%;filter:blur(120px);animation:fl 10s ease-in-out infinite}
+.b1{width:700px;height:600px;background:rgba(79,127,255,.07);top:-200px;left:-200px}
+.b2{width:500px;height:500px;background:rgba(123,95,255,.06);bottom:-100px;right:-100px;animation-delay:-5s}
+.b3{width:300px;height:300px;background:rgba(45,212,191,.04);top:40%;left:40%;animation-delay:-3s}
+@keyframes fl{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,-15px)}}
+.grid-bg{position:fixed;inset:0;background-image:linear-gradient(rgba(79,127,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(79,127,255,.03) 1px,transparent 1px);background-size:48px 48px;z-index:0}
+
+/* SPLIT LAYOUT */
+.left{width:420px;min-width:420px;background:rgba(8,10,16,.8);border-right:1px solid var(--br);display:flex;flex-direction:column;padding:48px 40px;position:relative;z-index:10;backdrop-filter:blur(20px)}
+.right{flex:1;display:flex;align-items:center;justify-content:center;padding:40px;position:relative;z-index:10}
+
+/* LEFT PANEL */
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:48px}
+.lm{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--a),var(--a2));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:#fff}
+.ln{font-family:'Syne',sans-serif;font-weight:700;font-size:20px;color:var(--tx)}
+.tagline{font-family:'Syne',sans-serif;font-size:clamp(24px,3vw,34px);font-weight:800;line-height:1.15;color:var(--tx);margin-bottom:16px;letter-spacing:-.02em}
+.tagline span{background:linear-gradient(135deg,var(--a),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.tagline-p{font-size:14px;color:var(--mu);line-height:1.7;margin-bottom:40px}
+.feat-list{display:flex;flex-direction:column;gap:14px}
+.fl-item{display:flex;align-items:center;gap:12px;font-size:13px;color:rgba(238,240,246,.7)}
+.fl-ic{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.fl-ic.b{background:rgba(79,127,255,.12);border:1px solid rgba(79,127,255,.18)}
+.fl-ic.p{background:rgba(123,95,255,.12);border:1px solid rgba(123,95,255,.18)}
+.fl-ic.t{background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.18)}
+.review{margin-top:auto;padding:20px;background:rgba(255,255,255,.03);border:1px solid var(--br);border-radius:14px}
+.rev-text{font-size:13px;color:rgba(238,240,246,.6);line-height:1.65;margin-bottom:14px;font-style:italic}
+.rev-auth{display:flex;align-items:center;gap:10px}
+.rev-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--a2));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.rev-name{font-size:12px;color:var(--tx);font-weight:500}
+.rev-role{font-size:11px;color:var(--mu)}
+.rev-stars{color:#fbbf24;font-size:11px;letter-spacing:1px;margin-bottom:8px}
+
+/* RIGHT PANEL — FORM */
+.form-wrap{width:100%;max-width:420px}
+.tabs{display:flex;background:rgba(255,255,255,.04);border:1px solid var(--br);border-radius:12px;padding:4px;margin-bottom:32px}
+.tab{flex:1;padding:10px;text-align:center;border-radius:9px;font-size:14px;font-weight:500;cursor:pointer;transition:all .25s;color:var(--mu);border:none;background:transparent;font-family:'DM Sans',sans-serif}
+.tab.on{background:var(--a);color:#fff;box-shadow:0 4px 16px rgba(79,127,255,.3)}
+
+/* card */
+.card{background:rgba(13,16,24,.9);border:1px solid var(--br);border-radius:20px;padding:36px 32px;backdrop-filter:blur(20px);position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--a),var(--a2),transparent)}
+.ch{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--tx);margin-bottom:6px;letter-spacing:-.01em}
+.cp{font-size:13px;color:var(--mu);margin-bottom:26px;line-height:1.5}
+
+/* inputs */
+.fg{margin-bottom:16px}
+.fg label{display:block;font-size:11px;color:rgba(79,127,255,.8);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;font-weight:500}
+.fg input{width:100%;background:rgba(255,255,255,.04);border:1.5px solid var(--br);border-radius:10px;padding:12px 16px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:all .25s}
+.fg input::placeholder{color:var(--mu)}
+.fg input:focus{border-color:rgba(79,127,255,.5);background:rgba(79,127,255,.04)}
+.fg input.err{border-color:rgba(239,68,68,.5)!important}
+.err-msg{font-size:11px;color:#f87171;margin-top:4px;display:none}
+.err-msg.on{display:block}
+.pw-wrap{position:relative}
+.pw-wrap input{padding-right:44px}
+.pw-eye{position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--mu);font-size:16px;transition:color .2s;background:none;border:none}
+.pw-eye:hover{color:var(--tx)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.forgot{font-size:12px;color:var(--a);text-decoration:none;transition:opacity .2s;float:right;margin-top:-10px;display:block}
+.forgot:hover{opacity:.7}
+
+/* social */
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--mu);font-size:12px}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--br)}
+.social-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.sbtn{display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border:1px solid var(--br);border-radius:10px;font-size:13px;color:var(--mu);text-decoration:none;transition:all .2s;background:transparent;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%}
+.sbtn:hover{border-color:rgba(79,127,255,.35);color:var(--tx);background:rgba(79,127,255,.04)}
+
+/* submit */
+.btn-sub{width:100%;background:linear-gradient(135deg,var(--a),var(--a2));color:#fff;border:none;padding:13px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:all .2s;letter-spacing:.02em;margin-top:4px}
+.btn-sub:hover{opacity:.9;transform:translateY(-1px)}
+.btn-sub:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* progress */
+.pwd-strength{margin-top:6px;height:3px;border-radius:2px;background:rgba(255,255,255,.06);overflow:hidden}
+.pwd-bar{height:100%;border-radius:2px;transition:all .3s;width:0}
+.pwd-label{font-size:10px;margin-top:4px;transition:color .3s}
+
+/* RODO */
+.rodo-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:16px}
+.rodo-row input[type=checkbox]{width:14px;height:14px;margin-top:2px;accent-color:var(--a);flex-shrink:0}
+.rodo-row label{font-size:12px;color:var(--mu);line-height:1.5;cursor:pointer}
+.rodo-row a{color:var(--a);text-decoration:none}
+
+/* bottom note */
+.form-note{font-size:12px;color:var(--mu);text-align:center;margin-top:16px}
+.form-note a{color:var(--a);text-decoration:none}
+
+/* toast */
+.toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--bg3);border:1px solid var(--br);border-radius:12px;padding:14px 20px;font-size:14px;color:var(--tx);box-shadow:0 8px 32px rgba(0,0,0,.5);transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none;max-width:280px}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* loading overlay */
+.loading{display:none;position:fixed;inset:0;background:rgba(5,6,10,.8);z-index:9000;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.loading.show{display:flex}
+.spinner{width:44px;height:44px;border:3px solid rgba(79,127,255,.2);border-top-color:var(--a);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* MOBILE */
+@media(max-width:900px){
+  body{flex-direction:column}
+  .left{width:100%;min-width:unset;padding:24px 20px;border-right:none;border-bottom:1px solid var(--br)}
+  .feat-list,.review{display:none}
+  .tagline{font-size:24px}
+  .right{padding:24px 20px}
+  .card{padding:28px 22px}
+  .row2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="mesh"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="grid-bg"></div>
+<div class="loading" id="loading"><div class="spinner"></div></div>
+<div class="toast" id="toast"></div>
+
+<!-- LEFT -->
+<div class="left">
+  <div class="brand"><div class="lm">V</div><span class="ln">Velqora</span></div>
+  <div class="tagline">Księgowość<br/>nowej <span>generacji</span></div>
+  <p class="tagline-p">Dołącz do setek firm, które zautomatyzowały swoją księgowość z Velqora AI.</p>
+  <div class="feat-list">
+    <div class="fl-item"><div class="fl-ic b">🤖</div>AI analiza dokumentów w 3 sekundy</div>
+    <div class="fl-item"><div class="fl-ic p">⚡</div>Automatyczne faktury i przypomnienia</div>
+    <div class="fl-item"><div class="fl-ic t">📤</div>Eksport JPK gotowy jednym kliknięciem</div>
+    <div class="fl-item"><div class="fl-ic b">🔒</div>Szyfrowanie AES-256, serwery w Polsce</div>
+    <div class="fl-item"><div class="fl-ic p">📊</div>Raporty finansowe w czasie rzeczywistym</div>
+  </div>
+  <div class="review">
+    <div class="rev-stars">★★★★★</div>
+    <p class="rev-text">"Velqora zredukowała czas zamknięcia miesiąca z 3 dni do kilku godzin. Nieocenione narzędzie."</p>
+    <div class="rev-auth"><div class="rev-av">MK</div><div><div class="rev-name">Monika Kamińska</div><div class="rev-role">Główna Księgowa, Novax</div></div></div>
+  </div>
+</div>
+
+<!-- RIGHT -->
+<div class="right">
+  <div class="form-wrap">
+    <div class="tabs">
+      <button class="tab on" onclick="showTab('login')">Logowanie</button>
+      <button class="tab" onclick="showTab('register')">Rejestracja</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="pane-login">
+      <div class="card">
+        <div class="ch">Witaj z powrotem 👋</div>
+        <p class="cp">Zaloguj się do swojego konta Velqora.</p>
+        <div class="social-btns">
+          <button class="sbtn" onclick="socialLogin('Google')">🔵 Google</button>
+          <button class="sbtn" onclick="socialLogin('Microsoft')">🟦 Microsoft</button>
+        </div>
+        <div class="divider">lub e-mailem</div>
+        <div class="fg">
+          <label>E-mail</label>
+          <input type="email" id="l-email" placeholder="jan@firma.pl" onkeydown="if(event.key==='Enter')doLogin()"/>
+          <div class="err-msg" id="le-email">Podaj poprawny adres e-mail</div>
+        </div>
+        <div class="fg">
+          <label>Hasło</label>
+          <a href="#" class="forgot" onclick="forgotPwd(event)">Zapomniałem hasła</a>
+          <div class="pw-wrap">
+            <input type="password" id="l-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
+            <button class="pw-eye" onclick="togglePwd('l-pass',this)">👁</button>
+          </div>
+          <div class="err-msg" id="le-pass">Hasło musi mieć min. 6 znaków</div>
+        </div>
+        <div class="rodo-row" style="margin-bottom:20px">
+          <input type="checkbox" id="l-remember"/>
+          <label for="l-remember">Zapamiętaj mnie przez 30 dni</label>
+        </div>
+        <button class="btn-sub" onclick="doLogin()">Zaloguj się →</button>
+        <p class="form-note">Nie masz konta? <a href="#" onclick="showTab('register');return false">Zarejestruj się za darmo</a></p>
+      </div>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div id="pane-register" style="display:none">
+      <div class="card">
+        <div class="ch">Utwórz konto 🚀</div>
+        <p class="cp">14 dni za darmo, bez karty kredytowej.</p>
+        <div class="row2">
+          <div class="fg">
+            <label>Imię *</label>
+            <input type="text" id="r-name" placeholder="Jan"/>
+            <div class="err-msg" id="re-name">Podaj imię</div>
+          </div>
+          <div class="fg">
+            <label>Nazwisko *</label>
+            <input type="text" id="r-surname" placeholder="Kowalski"/>
+            <div class="err-msg" id="re-surname">Podaj nazwisko</div>
+          </div>
+        </div>
+        <div class="fg">
+          <label>E-mail firmowy *</label>
+          <input type="email" id="r-email" placeholder="jan@firma.pl"/>
+          <div class="err-msg" id="re-email">Podaj poprawny adres e-mail</div>
+        </div>
+        <div class="fg">
+          <label>Nazwa firmy</label>
+          <input type="text" id="r-firm" placeholder="Moja Firma Sp. z o.o."/>
+        </div>
+        <div class="fg">
+          <label>Hasło *</label>
+          <div class="pw-wrap">
+            <input type="password" id="r-pass" placeholder="Min. 8 znaków" oninput="checkPwd(this.value)"/>
+            <button class="pw-eye" onclick="togglePwd('r-pass',this)">👁</button>
+          </div>
+          <div class="pwd-strength"><div class="pwd-bar" id="pwd-bar"></div></div>
+          <div class="pwd-label" id="pwd-label" style="color:var(--mu)">Siła hasła</div>
+          <div class="err-msg" id="re-pass">Hasło musi mieć min. 8 znaków</div>
+        </div>
+        <div class="fg">
+          <label>Powtórz hasło *</label>
+          <div class="pw-wrap">
+            <input type="password" id="r-pass2" placeholder="Powtórz hasło"/>
+            <button class="pw-eye" onclick="togglePwd('r-pass2',this)">👁</button>
+          </div>
+          <div class="err-msg" id="re-pass2">Hasła muszą być identyczne</div>
+        </div>
+        <div class="rodo-row">
+          <input type="checkbox" id="r-terms"/>
+          <label for="r-terms">Akceptuję <a href="#">Regulamin</a> i <a href="#">Politykę Prywatności</a> Velqora *</label>
+        </div>
+        <div class="err-msg" id="re-terms" style="margin-bottom:12px">Wymagana akceptacja regulaminu</div>
+        <div class="rodo-row">
+          <input type="checkbox" id="r-news"/>
+          <label for="r-news">Chcę otrzymywać newsletter z poradami i aktualizacjami (opcjonalnie)</label>
+        </div>
+        <button class="btn-sub" style="margin-top:14px" onclick="doRegister()">Utwórz konto za darmo →</button>
+        <p class="form-note">Masz już konto? <a href="#" onclick="showTab('login');return false">Zaloguj się</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// TABS
+function showTab(t){
+  document.getElementById("pane-login").style.display=t==="login"?"block":"none";
+  document.getElementById("pane-register").style.display=t==="register"?"block":"none";
+  document.querySelectorAll(".tab").forEach((b,i)=>b.classList.toggle("on",(t==="login"&&i===0)||(t==="register"&&i===1)));
+}
+
+// SHOW/HIDE PASSWORD
+function togglePwd(id,btn){const inp=document.getElementById(id);inp.type=inp.type==="password"?"text":"password";btn.textContent=inp.type==="password"?"👁":"🙈";}
+
+// PASSWORD STRENGTH
+function checkPwd(v){
+  const bar=document.getElementById("pwd-bar"),lbl=document.getElementById("pwd-label");
+  let score=0;
+  if(v.length>=8)score++;if(v.length>=12)score++;if(/[A-Z]/.test(v))score++;if(/[0-9]/.test(v))score++;if(/[^A-Za-z0-9]/.test(v))score++;
+  const levels=[{w:"0%",c:"var(--mu)",l:"Siła hasła"},{w:"25%",c:"#ef4444",l:"Bardzo słabe"},{w:"50%",c:"#f97316",l:"Słabe"},{w:"75%",c:"#eab308",l:"Dobre"},{w:"90%",c:"#22c55e",l:"Silne"},{w:"100%",c:"#2dd4bf",l:"Bardzo silne"}];
+  const lvl=levels[Math.min(score,5)];
+  bar.style.width=lvl.w;bar.style.background=lvl.c;lbl.style.color=lvl.c;lbl.textContent=lvl.l;
+}
+
+// TOAST
+function toast(msg,ok=true){const t=document.getElementById("toast");t.textContent=msg;t.style.borderColor=ok?"rgba(45,212,191,.4)":"rgba(239,68,68,.4)";t.classList.add("show");setTimeout(()=>t.classList.remove("show"),3500);}
+
+// SET ERROR
+function setE(id,show){const inp=document.getElementById(id);const msg=document.getElementById("e"+id.replace(/^[lr]/,"e-"));if(inp)inp.classList.toggle("err",show);if(msg)msg.classList.toggle("on",show);}
+function setErr(id,show){const inp=document.getElementById(id);if(inp)inp.classList.toggle("err",show);const msg=document.getElementById("re-"+id.split("-")[1]);if(msg)msg.classList.toggle("on",show);}
+function setLErr(id,show){const inp=document.getElementById(id);if(inp)inp.classList.toggle("err",show);const msg=document.getElementById("le-"+id.split("-")[1]);if(msg)msg.classList.toggle("on",show);}
+
+// LOADING
+function showLoad(){document.getElementById("loading").classList.add("show");}
+function hideLoad(){document.getElementById("loading").classList.remove("show");}
+
+// LOGIN
+function doLogin(){
+  const email=document.getElementById("l-email").value.trim();
+  const pass=document.getElementById("l-pass").value;
+  let ok=true;
+  setLErr("l-email",!email||!email.includes("@"));if(!email||!email.includes("@"))ok=false;
+  setLErr("l-pass",pass.length<6);if(pass.length<6)ok=false;
+  if(!ok){toast("Uzupełnij poprawnie formularz",false);return;}
+  showLoad();
+  setTimeout(()=>{hideLoad();window.location.href="dashboard.html";},1400);
+}
+
+// REGISTER
+function doRegister(){
+  const name=document.getElementById("r-name").value.trim();
+  const surname=document.getElementById("r-surname").value.trim();
+  const email=document.getElementById("r-email").value.trim();
+  const pass=document.getElementById("r-pass").value;
+  const pass2=document.getElementById("r-pass2").value;
+  const terms=document.getElementById("r-terms").checked;
+  let ok=true;
+  setErr("r-name",!name);if(!name)ok=false;
+  setErr("r-surname",!surname);if(!surname)ok=false;
+  setErr("r-email",!email||!email.includes("@"));if(!email||!email.includes("@"))ok=false;
+  setErr("r-pass",pass.length<8);if(pass.length<8)ok=false;
+  setErr("r-pass2",pass!==pass2);if(pass!==pass2)ok=false;
+  const termMsg=document.getElementById("re-terms");if(!terms){termMsg.classList.add("on");ok=false;}else termMsg.classList.remove("on");
+  if(!ok){toast("Uzupełnij wymagane pola",false);return;}
+  showLoad();
+  setTimeout(()=>{hideLoad();window.location.href="dashboard.html";},1600);
+}
+
+// SOCIAL LOGIN
+function socialLogin(p){showLoad();setTimeout(()=>{hideLoad();window.location.href="dashboard.html";},1200);}
+
+// FORGOT PASSWORD
+function forgotPwd(e){e.preventDefault();const email=document.getElementById("l-email").value.trim();if(email&&email.includes("@")){toast("✅ Link do resetowania wysłany na "+email);}else{toast("Najpierw wpisz swój adres e-mail",false);document.getElementById("l-email").focus();}}
+</script>
+</body>
+</html>

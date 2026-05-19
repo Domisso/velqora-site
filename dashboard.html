@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Velqora — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#05060a;--bg2:#080a10;--bg3:#0d1018;--bg4:#111520;--a:#4f7fff;--a2:#7b5fff;--teal:#2dd4bf;--tx:#eef0f6;--mu:#5a6080;--br:rgba(79,127,255,.14);--red:#ef4444;--green:#22c55e;--yellow:#eab308;--sb:220px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;display:flex;height:100vh;overflow:hidden}
+
+/* ══ SIDEBAR ══ */
+.sb{width:var(--sb);min-width:var(--sb);background:rgba(8,10,16,.95);border-right:1px solid var(--br);display:flex;flex-direction:column;height:100vh;backdrop-filter:blur(20px);position:relative;z-index:100;transition:width .3s}
+.sb.collapsed{width:64px;min-width:64px}
+.sb-logo{display:flex;align-items:center;gap:10px;padding:20px 18px;border-bottom:1px solid var(--br)}
+.lm{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--a),var(--a2));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:#fff;flex-shrink:0}
+.sb-logo-text{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;color:var(--tx);white-space:nowrap;overflow:hidden;transition:opacity .2s}
+.sb.collapsed .sb-logo-text,.sb.collapsed .nav-label,.sb.collapsed .sb-user-info,.sb.collapsed .plan-info{opacity:0;width:0;overflow:hidden}
+.sb-toggle{position:absolute;right:-12px;top:24px;width:24px;height:24px;background:var(--bg3);border:1px solid var(--br);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;color:var(--mu);transition:all .2s;z-index:200}
+.sb-toggle:hover{background:rgba(79,127,255,.1);color:var(--a)}
+.sb-nav{flex:1;padding:12px 10px;overflow-y:auto;overflow-x:hidden}
+.sb-nav::-webkit-scrollbar{width:3px}
+.sb-nav::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
+.nav-section{font-size:9px;color:var(--mu);letter-spacing:.12em;text-transform:uppercase;padding:14px 8px 6px;white-space:nowrap;overflow:hidden;transition:opacity .2s}
+.sb.collapsed .nav-section{opacity:0}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;cursor:pointer;margin-bottom:2px;transition:all .2s;position:relative;white-space:nowrap}
+.ni:hover{background:rgba(255,255,255,.04);color:var(--tx)}
+.ni.act{background:rgba(79,127,255,.12);color:var(--a)}
+.ni .icon{font-size:16px;flex-shrink:0;width:20px;text-align:center}
+.nav-label{font-size:13px;overflow:hidden;transition:opacity .2s,width .2s}
+.ni .badge{margin-left:auto;background:var(--a);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;flex-shrink:0}
+.sb-plan{padding:12px 14px;margin:0 8px;background:rgba(79,127,255,.06);border:1px solid rgba(79,127,255,.14);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.plan-name{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--a);margin-bottom:4px;white-space:nowrap}
+.plan-bar{height:3px;background:rgba(255,255,255,.07);border-radius:2px;margin-bottom:4px}
+.plan-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--a),var(--teal));width:62%}
+.plan-info{font-size:10px;color:var(--mu);white-space:nowrap;overflow:hidden}
+.sb-user{display:flex;align-items:center;gap:10px;padding:14px 16px;border-top:1px solid var(--br);overflow:hidden}
+.user-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--a2));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.sb-user-info{overflow:hidden;flex:1}
+.user-name{font-size:13px;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-role{font-size:10px;color:var(--mu)}
+.logout-btn{width:28px;height:28px;border:none;background:none;color:var(--mu);cursor:pointer;font-size:16px;border-radius:6px;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.logout-btn:hover{background:rgba(239,68,68,.1);color:#ef4444}
+
+/* ══ MAIN ══ */
+.main{flex:1;overflow-y:auto;overflow-x:hidden;background:var(--bg);position:relative}
+.main::-webkit-scrollbar{width:4px}
+.main::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
+
+/* ══ TOPBAR ══ */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(5,6,10,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--br);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.page-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--tx)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.search-bar{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);border:1px solid var(--br);border-radius:10px;padding:8px 14px;transition:border-color .2s}
+.search-bar:focus-within{border-color:rgba(79,127,255,.4)}
+.search-bar input{background:none;border:none;outline:none;color:var(--tx);font-size:13px;font-family:'DM Sans',sans-serif;width:180px}
+.search-bar input::placeholder{color:var(--mu)}
+.tb-btn{width:36px;height:36px;border:1px solid var(--br);border-radius:9px;background:none;cursor:pointer;color:var(--mu);font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s;position:relative}
+.tb-btn:hover{border-color:rgba(79,127,255,.35);color:var(--tx)}
+.tb-notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--a);border-radius:50%;border:1.5px solid var(--bg)}
+.ham-mobile{display:none;flex-direction:column;gap:4px;cursor:pointer;padding:6px;background:none;border:none}
+.ham-mobile span{display:block;width:20px;height:2px;background:var(--tx);border-radius:2px}
+
+/* ══ PANELS ══ */
+.panel{display:none;padding:28px;animation:fadeIn .3s ease}
+.panel.show{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══ DASHBOARD ══ */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.kpi{background:var(--bg3);border:1px solid var(--br);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:all .25s}
+.kpi:hover{border-color:rgba(79,127,255,.25);transform:translateY(-2px)}
+.kpi::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--kc,linear-gradient(90deg,var(--a),var(--a2)))}
+.kpi-label{font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.kpi-val{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--tx);margin-bottom:4px}
+.kpi-change{font-size:12px;display:flex;align-items:center;gap:4px}
+.kpi-icon{position:absolute;top:18px;right:18px;font-size:22px;opacity:.4}
+
+.grid2{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-bottom:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px}
+.card{background:var(--bg3);border:1px solid var(--br);border-radius:14px;padding:22px}
+.card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.card-t{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--tx)}
+.card-link{font-size:12px;color:var(--a);cursor:pointer;transition:opacity .2s}
+.card-link:hover{opacity:.7}
+
+/* CHART */
+.chart-wrap{display:flex;align-items:flex-end;gap:6px;height:120px;padding-top:10px}
+.bar{border-radius:4px 4px 0 0;flex:1;min-width:0;transition:all .3s;cursor:pointer;position:relative}
+.bar:hover{filter:brightness(1.2)}
+.bar.main-bar{background:linear-gradient(0deg,var(--a),var(--a2))}
+.bar.sec-bar{background:rgba(79,127,255,.25)}
+.bar.cur-bar{background:linear-gradient(0deg,var(--teal),var(--a))}
+.chart-labels{display:flex;gap:6px;margin-top:6px}
+.chart-labels span{flex:1;text-align:center;font-size:10px;color:var(--mu)}
+
+/* ACTIVITY LIST */
+.act-list{display:flex;flex-direction:column;gap:8px}
+.act-item{display:flex;align-items:center;gap:12px;padding:10px 12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:10px;transition:border-color .2s}
+.act-item:hover{border-color:var(--br)}
+.act-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.act-icon.g{background:rgba(34,197,94,.1)}
+.act-icon.b{background:rgba(79,127,255,.1)}
+.act-icon.y{background:rgba(234,179,8,.1)}
+.act-icon.r{background:rgba(239,68,68,.1)}
+.act-info{flex:1;min-width:0}
+.act-name{font-size:13px;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.act-sub{font-size:11px;color:var(--mu);margin-top:1px}
+.act-val{font-size:13px;font-weight:500;white-space:nowrap}
+.act-val.pos{color:var(--green)}
+.act-val.neg{color:var(--red)}
+.act-val.neu{color:var(--mu)}
+
+/* QUICK ACTIONS */
+.qa-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.qa{background:rgba(255,255,255,.02);border:1px solid var(--br);border-radius:12px;padding:16px 12px;text-align:center;cursor:pointer;transition:all .25s}
+.qa:hover{background:rgba(79,127,255,.06);border-color:rgba(79,127,255,.3);transform:translateY(-2px)}
+.qa-icon{font-size:24px;margin-bottom:8px}
+.qa-label{font-size:11px;color:var(--mu);line-height:1.3}
+
+/* STATUS PILLS */
+.pill-g{background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.2);font-size:10px;padding:3px 10px;border-radius:20px;white-space:nowrap}
+.pill-y{background:rgba(234,179,8,.1);color:#eab308;border:1px solid rgba(234,179,8,.2);font-size:10px;padding:3px 10px;border-radius:20px;white-space:nowrap}
+.pill-r{background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.2);font-size:10px;padding:3px 10px;border-radius:20px;white-space:nowrap}
+.pill-b{background:rgba(79,127,255,.1);color:var(--a);border:1px solid rgba(79,127,255,.2);font-size:10px;padding:3px 10px;border-radius:20px;white-space:nowrap}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:.08em;padding:8px 12px;text-align:left;border-bottom:1px solid var(--br)}
+.tbl td{padding:11px 12px;font-size:13px;color:var(--tx);border-bottom:1px solid rgba(255,255,255,.03)}
+.tbl tr:hover td{background:rgba(255,255,255,.02)}
+.tbl tr:last-child td{border-bottom:none}
+
+/* ══ INVOICES ══ */
+.inv-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.inv-filters{display:flex;gap:8px;flex-wrap:wrap}
+.filter-btn{padding:7px 14px;border-radius:8px;border:1px solid var(--br);background:none;color:var(--mu);font-size:12px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.filter-btn.on{background:rgba(79,127,255,.1);border-color:rgba(79,127,255,.3);color:var(--a)}
+.btn-add{background:linear-gradient(135deg,var(--a),var(--a2));color:#fff;border:none;padding:9px 18px;border-radius:9px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;transition:all .2s}
+.btn-add:hover{opacity:.9;transform:translateY(-1px)}
+
+/* ══ AI ANALYSIS ══ */
+.ai-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.drop-zone{border:1.5px dashed rgba(79,127,255,.3);border-radius:14px;padding:48px 24px;text-align:center;cursor:pointer;transition:all .25s;background:rgba(79,127,255,.02)}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--a);background:rgba(79,127,255,.06)}
+.dz-icon{font-size:44px;margin-bottom:14px;opacity:.6}
+.dz-t{font-family:'Syne',sans-serif;font-size:16px;color:var(--tx);margin-bottom:6px}
+.dz-s{font-size:12px;color:var(--mu);margin-bottom:18px}
+.ai-result{background:var(--bg3);border:1px solid var(--br);border-radius:14px;padding:24px;min-height:300px}
+.ai-thinking{display:flex;flex-direction:column;align-items:center;justify-content:center;height:200px;gap:12px}
+.ai-spinner{width:40px;height:40px;border:3px solid rgba(79,127,255,.2);border-top-color:var(--a);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ai-history{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+.ai-hist-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,255,255,.02);border:1px solid var(--br);border-radius:10px;cursor:pointer;transition:all .2s}
+.ai-hist-item:hover{border-color:rgba(79,127,255,.3);background:rgba(79,127,255,.04)}
+
+/* ══ SETTINGS ══ */
+.settings-nav{display:flex;gap:4px;border-bottom:1px solid var(--br);margin-bottom:28px}
+.s-tab{padding:10px 16px;font-size:13px;color:var(--mu);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif}
+.s-tab.on{color:var(--a);border-bottom-color:var(--a)}
+.s-section{margin-bottom:28px}
+.s-section-t{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--tx);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--br)}
+.s-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.s-row:last-child{border-bottom:none}
+.s-label{font-size:14px;color:var(--tx)}
+.s-sub{font-size:12px;color:var(--mu);margin-top:2px}
+.toggle{width:44px;height:24px;background:rgba(255,255,255,.1);border-radius:12px;position:relative;cursor:pointer;transition:background .25s;border:none}
+.toggle.on{background:var(--a)}
+.toggle::after{content:"";position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform .25s}
+.toggle.on::after{transform:translateX(20px)}
+.s-input{background:rgba(255,255,255,.04);border:1px solid var(--br);border-radius:9px;padding:9px 14px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;width:220px;transition:border-color .2s}
+.s-input:focus{border-color:rgba(79,127,255,.5)}
+.s-save{background:linear-gradient(135deg,var(--a),var(--a2));color:#fff;border:none;padding:10px 22px;border-radius:9px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.s-save:hover{opacity:.9}
+
+/* ══ NOTIFICATIONS ══ */
+.notif-list{display:flex;flex-direction:column;gap:8px}
+.notif{display:flex;gap:12px;padding:14px 16px;border-radius:12px;border:1px solid;transition:all .2s}
+.notif.unread{background:rgba(79,127,255,.04);border-color:rgba(79,127,255,.18)}
+.notif.read{background:rgba(255,255,255,.01);border-color:rgba(255,255,255,.04)}
+.notif-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.notif-body{flex:1}
+.notif-text{font-size:13px;color:var(--tx);margin-bottom:3px}
+.notif-time{font-size:11px;color:var(--mu)}
+.notif-dot{width:8px;height:8px;background:var(--a);border-radius:50%;flex-shrink:0;margin-top:6px}
+
+/* ══ MODAL ══ */
+.modal-overlay{position:fixed;inset:0;background:rgba(5,6,10,.8);backdrop-filter:blur(8px);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+.modal-overlay.show{opacity:1;pointer-events:all}
+.modal{background:var(--bg3);border:1px solid var(--br);border-radius:18px;padding:32px;width:100%;max-width:480px;position:relative;transform:translateY(16px);transition:transform .3s}
+.modal-overlay.show .modal{transform:translateY(0)}
+.modal::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--a),var(--a2),transparent)}
+.modal-h{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--tx);margin-bottom:6px}
+.modal-p{font-size:13px;color:var(--mu);margin-bottom:24px}
+.modal-close{position:absolute;top:16px;right:16px;width:28px;height:28px;border:none;background:rgba(255,255,255,.06);border-radius:7px;cursor:pointer;color:var(--mu);font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.modal-close:hover{background:rgba(239,68,68,.1);color:#ef4444}
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:10px;color:rgba(79,127,255,.8);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;font-weight:500}
+.fg input,.fg select,.fg textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--br);border-radius:9px;padding:10px 14px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border-color .2s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:rgba(79,127,255,.5)}
+.fg select option{background:var(--bg3)}
+.fg textarea{min-height:80px;resize:none}
+.modal-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end}
+.btn-cancel{border:1px solid var(--br);color:var(--mu);padding:10px 20px;border-radius:9px;font-size:13px;cursor:pointer;background:none;font-family:'DM Sans',sans-serif;transition:all .2s}
+.btn-cancel:hover{border-color:rgba(79,127,255,.3);color:var(--tx)}
+.btn-confirm{background:linear-gradient(135deg,var(--a),var(--a2));color:#fff;border:none;padding:10px 22px;border-radius:9px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.btn-confirm:hover{opacity:.9}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--bg3);border:1px solid rgba(79,127,255,.35);border-radius:12px;padding:12px 18px;font-size:13px;color:var(--tx);box-shadow:0 8px 32px rgba(0,0,0,.5);transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none;max-width:280px}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* PROGRESS */
+.prog-wrap{background:rgba(255,255,255,.06);border-radius:3px;height:5px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--a),var(--teal))}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .sb{position:fixed;left:-var(--sb);z-index:200;transition:left .3s}
+  .sb.mob-open{left:0}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .grid2,.grid3,.ai-layout{grid-template-columns:1fr}
+  .qa-grid{grid-template-columns:repeat(2,1fr)}
+  .ham-mobile{display:flex}
+  .search-bar{display:none}
+  .panel{padding:16px}
+}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+
+<!-- ADD INVOICE MODAL -->
+<div class="modal-overlay" id="modal-inv">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-inv')">✕</button>
+    <div class="modal-h">Nowa faktura</div>
+    <p class="modal-p">Uzupełnij dane faktury — zostanie zapisana automatycznie.</p>
+    <div class="modal-row"><div class="fg"><label>Numer faktury</label><input type="text" value="FV/2026/05/048" id="inv-num"/></div><div class="fg"><label>Data wystawienia</label><input type="date" id="inv-date"/></div></div>
+    <div class="fg"><label>Kontrahent</label><input type="text" placeholder="Nazwa firmy lub osoby..." id="inv-client"/></div>
+    <div class="modal-row"><div class="fg"><label>Kwota netto (zł)</label><input type="number" placeholder="0.00" id="inv-net"/></div><div class="fg"><label>VAT (%)</label><select id="inv-vat"><option>23</option><option>8</option><option>5</option><option>0</option><option>ZW</option></select></div></div>
+    <div class="fg"><label>Opis usługi / towaru</label><textarea placeholder="Opis..."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('modal-inv')">Anuluj</button>
+      <button class="btn-confirm" onclick="saveInvoice()">Zapisz fakturę →</button>
+    </div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<nav class="sb" id="sb">
+  <div class="sb-logo">
+    <div class="lm">V</div>
+    <span class="sb-logo-text">Velqora</span>
+  </div>
+  <button class="sb-toggle" id="sb-toggle" onclick="toggleSb()" title="Zwiń/rozwiń">◀</button>
+  <div class="sb-nav">
+    <div class="nav-section">Główne</div>
+    <div class="ni act" onclick="nav('dashboard')"><span class="icon">📊</span><span class="nav-label">Dashboard</span></div>
+    <div class="ni" onclick="nav('invoices')"><span class="icon">📄</span><span class="nav-label">Faktury</span><span class="badge">5</span></div>
+    <div class="ni" onclick="nav('ai')"><span class="icon">🤖</span><span class="nav-label">AI Analiza</span></div>
+    <div class="ni" onclick="nav('documents')"><span class="icon">📁</span><span class="nav-label">Dokumenty</span></div>
+    <div class="nav-section">Finanse</div>
+    <div class="ni" onclick="nav('reports')"><span class="icon">📈</span><span class="nav-label">Raporty</span></div>
+    <div class="ni" onclick="nav('expenses')"><span class="icon">💳</span><span class="nav-label">Wydatki</span></div>
+    <div class="ni" onclick="nav('jpk')"><span class="icon">🏛</span><span class="nav-label">JPK / US</span></div>
+    <div class="nav-section">Konto</div>
+    <div class="ni" onclick="nav('notifications')"><span class="icon">🔔</span><span class="nav-label">Powiadomienia</span><span class="badge" style="background:var(--red)">3</span></div>
+    <div class="ni" onclick="nav('settings')"><span class="icon">⚙️</span><span class="nav-label">Ustawienia</span></div>
+  </div>
+  <div class="sb-plan">
+    <div class="plan-name">Plan Pro</div>
+    <div class="plan-bar"><div class="plan-fill"></div></div>
+    <div class="plan-info">31 / 50 analiz tego miesiąca</div>
+  </div>
+  <div class="sb-user">
+    <div class="user-av">JK</div>
+    <div class="sb-user-info">
+      <div class="user-name">Jan Kowalski</div>
+      <div class="user-role">jan@firma.pl</div>
+    </div>
+    <button class="logout-btn" title="Wyloguj" onclick="window.location.href='login.html'">↩</button>
+  </div>
+</nav>
+
+<!-- MAIN AREA -->
+<div class="main" id="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="ham-mobile" onclick="toggleMobSb()"><span></span><span></span><span></span></button>
+      <div class="page-title" id="page-title">Dashboard</div>
+    </div>
+    <div class="topbar-right">
+      <div class="search-bar">
+        <span style="color:var(--mu);font-size:14px">🔍</span>
+        <input placeholder="Szukaj faktury, dokumentu..." onkeyup="searchItems(this.value)"/>
+      </div>
+      <button class="tb-btn" onclick="nav('notifications')" title="Powiadomienia">🔔<span class="tb-notif-dot"></span></button>
+      <button class="tb-btn" onclick="toast('Synchronizacja zakończona ✓','ok')" title="Synchronizuj">🔄</button>
+      <button class="tb-btn" onclick="nav('settings')" title="Ustawienia">⚙️</button>
+    </div>
+  </div>
+
+  <!-- ══ DASHBOARD PANEL ══ -->
+  <div class="panel show" id="panel-dashboard">
+    <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--tx)">Dzień dobry, Jan 👋</div>
+        <div style="font-size:13px;color:var(--mu);margin-top:3px">Poniedziałek, 18 maja 2026 · Plan Pro</div>
+      </div>
+      <button class="btn-add" onclick="openModal('modal-inv')">+ Nowa faktura</button>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi" style="--kc:linear-gradient(90deg,var(--a),var(--a2))">
+        <div class="kpi-icon">💰</div>
+        <div class="kpi-label">Przychody (maj)</div>
+        <div class="kpi-val">84 200 zł</div>
+        <div class="kpi-change" style="color:var(--green)">▲ +12% vs kwiecień</div>
+      </div>
+      <div class="kpi" style="--kc:linear-gradient(90deg,var(--teal),var(--a))">
+        <div class="kpi-icon">📄</div>
+        <div class="kpi-label">Faktury (maj)</div>
+        <div class="kpi-val">47</div>
+        <div class="kpi-change" style="color:var(--green)">▲ 5 nowych dziś</div>
+      </div>
+      <div class="kpi" style="--kc:linear-gradient(90deg,#eab308,#f97316)">
+        <div class="kpi-icon">⏳</div>
+        <div class="kpi-label">Do zapłaty</div>
+        <div class="kpi-val">12 400 zł</div>
+        <div class="kpi-change" style="color:var(--yellow)">● 3 przeterminowane</div>
+      </div>
+      <div class="kpi" style="--kc:linear-gradient(90deg,var(--a2),#9333ea)">
+        <div class="kpi-icon">🤖</div>
+        <div class="kpi-label">Analizy AI</div>
+        <div class="kpi-val">31 / 50</div>
+        <div class="kpi-change" style="color:var(--mu)">● 19 pozostało</div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <!-- CHART -->
+      <div class="card">
+        <div class="card-h">
+          <div class="card-t">Przychody 2026</div>
+          <select style="background:rgba(255,255,255,.04);border:1px solid var(--br);border-radius:7px;padding:5px 10px;color:var(--mu);font-size:11px;outline:none;font-family:'DM Sans',sans-serif">
+            <option>Miesięcznie</option><option>Kwartalnie</option><option>Rocznie</option>
+          </select>
+        </div>
+        <div class="chart-wrap">
+          <div class="bar sec-bar" style="height:38%"></div>
+          <div class="bar sec-bar" style="height:52%"></div>
+          <div class="bar sec-bar" style="height:45%"></div>
+          <div class="bar sec-bar" style="height:68%"></div>
+          <div class="bar main-bar" style="height:72%" title="Maj: 84 200 zł"></div>
+          <div class="bar sec-bar" style="height:0%;opacity:.3"></div>
+          <div class="bar sec-bar" style="height:0%;opacity:.3"></div>
+          <div class="bar sec-bar" style="height:0%;opacity:.3"></div>
+          <div class="bar sec-bar" style="height:0%;opacity:.3"></div>
+          <div class="bar sec-bar" style="height:0%;opacity:.3"></div>
+          <div class="bar sec-bar" style="height:0%;opacity:.3"></div>
+          <div class="bar sec-bar" style="height:0%;opacity:.3"></div>
+        </div>
+        <div class="chart-labels">
+          <span>Sty</span><span>Lut</span><span>Mar</span><span>Kwi</span><span style="color:var(--a)">Maj</span><span>Cze</span><span>Lip</span><span>Sie</span><span>Wrz</span><span>Paź</span><span>Lis</span><span>Gru</span>
+        </div>
+      </div>
+      <!-- QUICK ACTIONS -->
+      <div class="card">
+        <div class="card-h"><div class="card-t">Szybkie akcje</div></div>
+        <div class="qa-grid">
+          <div class="qa" onclick="openModal('modal-inv')"><div class="qa-icon">📄</div><div class="qa-label">Nowa<br/>faktura</div></div>
+          <div class="qa" onclick="nav('ai')"><div class="qa-icon">🤖</div><div class="qa-label">Analizuj<br/>dokument</div></div>
+          <div class="qa" onclick="exportJPK()"><div class="qa-icon">📤</div><div class="qa-label">Eksport<br/>JPK</div></div>
+          <div class="qa" onclick="nav('reports')"><div class="qa-icon">📊</div><div class="qa-label">Generuj<br/>raport</div></div>
+          <div class="qa" onclick="nav('expenses')"><div class="qa-icon">💳</div><div class="qa-label">Dodaj<br/>wydatek</div></div>
+          <div class="qa" onclick="nav('documents')"><div class="qa-icon">📁</div><div class="qa-label">Wgraj<br/>dokument</div></div>
+          <div class="qa" onclick="syncBank()"><div class="qa-icon">🏦</div><div class="qa-label">Sync<br/>bank</div></div>
+          <div class="qa" onclick="nav('settings')"><div class="qa-icon">⚙️</div><div class="qa-label">Ustawienia</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT TRANSACTIONS -->
+    <div class="grid2">
+      <div class="card">
+        <div class="card-h"><div class="card-t">Ostatnie faktury</div><div class="card-link" onclick="nav('invoices')">Zobacz wszystkie →</div></div>
+        <table class="tbl">
+          <tr><th>Klient</th><th>Data</th><th>Kwota</th><th>Status</th></tr>
+          <tr><td>TechStart Sp. z o.o.</td><td>18.05.2026</td><td>4 800 zł</td><td><span class="pill-g">Opłacona</span></td></tr>
+          <tr><td>Biuro Architektoniczne</td><td>17.05.2026</td><td>2 200 zł</td><td><span class="pill-y">Oczekuje</span></td></tr>
+          <tr><td>Restauracja "Pod Lipą"</td><td>15.05.2026</td><td>1 350 zł</td><td><span class="pill-r">Przeterminowana</span></td></tr>
+          <tr><td>E-commerce Nova</td><td>14.05.2026</td><td>6 100 zł</td><td><span class="pill-g">Opłacona</span></td></tr>
+          <tr><td>Kancelaria Nowak</td><td>12.05.2026</td><td>3 700 zł</td><td><span class="pill-b">W trakcie</span></td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-h"><div class="card-t">Ostatnia aktywność</div></div>
+        <div class="act-list">
+          <div class="act-item"><div class="act-icon g">✅</div><div class="act-info"><div class="act-name">Faktura FV/2026/05/047</div><div class="act-sub">Opłacona przez TechStart</div></div><div class="act-val pos">+4 800 zł</div></div>
+          <div class="act-item"><div class="act-icon b">🤖</div><div class="act-info"><div class="act-name">AI: umowa_najmu.pdf</div><div class="act-sub">Analiza zakończona</div></div><div class="act-val neu">przed chwilą</div></div>
+          <div class="act-item"><div class="act-icon y">⏰</div><div class="act-info"><div class="act-name">Termin płatności</div><div class="act-sub">FV/2026/05/041 — jutro!</div></div><div class="act-val neg">1 350 zł</div></div>
+          <div class="act-item"><div class="act-icon g">🏦</div><div class="act-info"><div class="act-name">Sync z PKO BP</div><div class="act-sub">18 nowych transakcji</div></div><div class="act-val neu">2h temu</div></div>
+          <div class="act-item"><div class="act-icon b">📤</div><div class="act-info"><div class="act-name">JPK_VAT wysłany</div><div class="act-sub">Kwiecień 2026</div></div><div class="act-val pos">Zaakceptowany</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ INVOICES PANEL ══ -->
+  <div class="panel" id="panel-invoices">
+    <div class="inv-toolbar">
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--tx)">Faktury</div>
+        <div style="font-size:13px;color:var(--mu);margin-top:2px">47 faktur w maju 2026</div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <div class="inv-filters">
+          <button class="filter-btn on" onclick="setFilter(this,'Wszystkie')">Wszystkie</button>
+          <button class="filter-btn" onclick="setFilter(this,'Opłacone')">Opłacone</button>
+          <button class="filter-btn" onclick="setFilter(this,'Oczekujące')">Oczekujące</button>
+          <button class="filter-btn" onclick="setFilter(this,'Przeterminowane')">Przeterminowane</button>
+        </div>
+        <button class="btn-add" onclick="openModal('modal-inv')">+ Nowa faktura</button>
+      </div>
+    </div>
+    <div class="card">
+      <table class="tbl" id="inv-table">
+        <tr><th>Nr faktury</th><th>Klient</th><th>Wystawiona</th><th>Termin</th><th>Kwota</th><th>VAT</th><th>Status</th><th>Akcje</th></tr>
+        <tr><td>FV/2026/05/047</td><td>TechStart Sp. z o.o.</td><td>18.05.2026</td><td>25.05.2026</td><td><b>4 800 zł</b></td><td>1 104 zł</td><td><span class="pill-g">Opłacona</span></td><td><span style="color:var(--a);cursor:pointer;font-size:12px" onclick="toast('Pobieranie PDF...')">⬇ PDF</span></td></tr>
+        <tr><td>FV/2026/05/046</td><td>Biuro Architektoniczne</td><td>17.05.2026</td><td>24.05.2026</td><td><b>2 200 zł</b></td><td>506 zł</td><td><span class="pill-y">Oczekuje</span></td><td><span style="color:var(--a);cursor:pointer;font-size:12px" onclick="toast('Wysłano przypomnienie')">📧 Wyślij</span></td></tr>
+        <tr><td>FV/2026/05/045</td><td>Kancelaria Nowak</td><td>14.05.2026</td><td>21.05.2026</td><td><b>3 700 zł</b></td><td>851 zł</td><td><span class="pill-b">W trakcie</span></td><td><span style="color:var(--a);cursor:pointer;font-size:12px" onclick="toast('Pobieranie PDF...')">⬇ PDF</span></td></tr>
+        <tr><td>FV/2026/05/044</td><td>E-commerce Nova</td><td>14.05.2026</td><td>21.05.2026</td><td><b>6 100 zł</b></td><td>1 403 zł</td><td><span class="pill-g">Opłacona</span></td><td><span style="color:var(--a);cursor:pointer;font-size:12px" onclick="toast('Pobieranie PDF...')">⬇ PDF</span></td></tr>
+        <tr><td>FV/2026/05/041</td><td>Restauracja "Pod Lipą"</td><td>08.05.2026</td><td>15.05.2026</td><td><b>1 350 zł</b></td><td>310 zł</td><td><span class="pill-r">Przeterminowana</span></td><td><span style="color:var(--red);cursor:pointer;font-size:12px" onclick="toast('Wysłano wezwanie do zapłaty')">⚠ Windykuj</span></td></tr>
+        <tr><td>FV/2026/05/038</td><td>Sklep Meblowy Komfort</td><td>05.05.2026</td><td>12.05.2026</td><td><b>8 900 zł</b></td><td>2 047 zł</td><td><span class="pill-g">Opłacona</span></td><td><span style="color:var(--a);cursor:pointer;font-size:12px" onclick="toast('Pobieranie PDF...')">⬇ PDF</span></td></tr>
+        <tr><td>FV/2026/05/035</td><td>Firma Budowlana Marek</td><td>02.05.2026</td><td>09.05.2026</td><td><b>12 600 zł</b></td><td>2 898 zł</td><td><span class="pill-g">Opłacona</span></td><td><span style="color:var(--a);cursor:pointer;font-size:12px" onclick="toast('Pobieranie PDF...')">⬇ PDF</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ AI PANEL ══ -->
+  <div class="panel" id="panel-ai">
+    <div style="margin-bottom:20px">
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--tx)">AI Analiza dokumentów</div>
+      <div style="font-size:13px;color:var(--mu);margin-top:2px">Wgraj dokument — AI przeanalizuje go w kilka sekund</div>
+    </div>
+    <div class="ai-layout">
+      <div>
+        <div class="drop-zone" id="dz" onclick="document.getElementById('file-inp').click()" ondrop="dropFile(event)" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')">
+          <div class="dz-icon">📄</div>
+          <div class="dz-t">Przeciągnij lub kliknij</div>
+          <div class="dz-s">PDF · DOCX · TXT — do 50 MB</div>
+          <button class="btn-add" style="display:inline-flex;margin:0 auto" onclick="event.stopPropagation();document.getElementById('file-inp').click()">Wybierz plik</button>
+          <input type="file" id="file-inp" style="display:none" accept=".pdf,.docx,.txt" onchange="analyzeDoc(this)"/>
+        </div>
+        <div class="card" style="margin-top:14px">
+          <div class="card-h"><div class="card-t">Historia analiz</div></div>
+          <div class="ai-history" id="ai-hist">
+            <div class="ai-hist-item" onclick="showAnalysis('umowa_najmu.pdf')"><span>📄</span><div style="flex:1"><div style="font-size:13px;color:var(--tx)">umowa_najmu.pdf</div><div style="font-size:11px;color:var(--mu)">18.05.2026 · 2 pytania</div></div><span class="pill-g">Gotowe</span></div>
+            <div class="ai-hist-item" onclick="showAnalysis('faktura_vat_04.pdf')"><span>📄</span><div style="flex:1"><div style="font-size:13px;color:var(--tx)">faktura_vat_04.pdf</div><div style="font-size:11px;color:var(--mu)">16.05.2026</div></div><span class="pill-g">Gotowe</span></div>
+            <div class="ai-hist-item" onclick="showAnalysis('akt_notarialny.pdf')"><span>📄</span><div style="flex:1"><div style="font-size:13px;color:var(--tx)">akt_notarialny.pdf</div><div style="font-size:11px;color:var(--mu)">12.05.2026 · 4 pytania</div></div><span class="pill-g">Gotowe</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="ai-result" id="ai-result">
+        <div style="font-size:11px;color:var(--a);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px">⚖ WYNIK ANALIZY</div>
+        <div id="ai-content" style="font-size:13px;color:var(--mu);display:flex;flex-direction:column;align-items:center;justify-content:center;height:200px;gap:8px;text-align:center">
+          <div style="font-size:36px;opacity:.3">🤖</div>
+          <div>Wgraj dokument,<br/>aby zobaczyć analizę AI</div>
+        </div>
+        <div id="ai-qa" style="margin-top:16px;display:none">
+          <div style="display:flex;gap:10px;margin-top:12px">
+            <input class="s-input" style="flex:1;width:auto" id="ai-q" placeholder="Zadaj pytanie o dokument..." onkeydown="if(event.key==='Enter')askAI()"/>
+            <button class="btn-add" onclick="askAI()">Zapytaj</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ DOCUMENTS PANEL ══ -->
+  <div class="panel" id="panel-documents">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+      <div><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--tx)">Dokumenty</div><div style="font-size:13px;color:var(--mu);margin-top:2px">24 pliki · 128 MB</div></div>
+      <button class="btn-add" onclick="toast('Otwieranie przeglądarki plików...')">+ Wgraj dokument</button>
+    </div>
+    <div class="grid3" style="margin-bottom:16px">
+      <div class="card" style="text-align:center;cursor:pointer" onclick="toast('Otwieranie folderu: Faktury')"><div style="font-size:32px;margin-bottom:8px">📂</div><div style="font-family:'Syne',sans-serif;font-size:14px;color:var(--tx)">Faktury</div><div style="font-size:11px;color:var(--mu);margin-top:4px">47 plików</div></div>
+      <div class="card" style="text-align:center;cursor:pointer" onclick="toast('Otwieranie folderu: Umowy')"><div style="font-size:32px;margin-bottom:8px">📂</div><div style="font-family:'Syne',sans-serif;font-size:14px;color:var(--tx)">Umowy</div><div style="font-size:11px;color:var(--mu);margin-top:4px">12 plików</div></div>
+      <div class="card" style="text-align:center;cursor:pointer" onclick="toast('Otwieranie folderu: Raporty')"><div style="font-size:32px;margin-bottom:8px">📂</div><div style="font-family:'Syne',sans-serif;font-size:14px;color:var(--tx)">Raporty</div><div style="font-size:11px;color:var(--mu);margin-top:4px">8 plików</div></div>
+    </div>
+    <div class="card">
+      <div class="card-h"><div class="card-t">Ostatnio dodane</div></div>
+      <table class="tbl">
+        <tr><th>Nazwa pliku</th><th>Typ</th><th>Rozmiar</th><th>Dodano</th><th>Akcje</th></tr>
+        <tr><td>📄 umowa_najmu_biuro.pdf</td><td><span class="pill-b">PDF</span></td><td>1.2 MB</td><td>18.05.2026</td><td><span style="color:var(--a);cursor:pointer;font-size:12px;margin-right:10px" onclick="nav('ai');showAnalysis('umowa_najmu.pdf')">🤖 Analizuj</span><span style="color:var(--a);cursor:pointer;font-size:12px" onclick="toast('Pobieranie...')">⬇</span></td></tr>
+        <tr><td>📄 sprawozdanie_q1_2026.xlsx</td><td><span class="pill-g">XLSX</span></td><td>340 KB</td><td>15.05.2026</td><td><span style="color:var(--a);cursor:pointer;font-size:12px;margin-right:10px" onclick="toast('Otwieranie w Excel...')">📊 Otwórz</span><span style="color:var(--a);cursor:pointer;font-size:12px" onclick="toast('Pobieranie...')">⬇</span></td></tr>
+        <tr><td>📄 jpk_vat_kwiecien.xml</td><td><span class="pill-y">XML</span></td><td>88 KB</td><td>10.05.2026</td><td><span style="color:var(--a);cursor:pointer;font-size:12px;margin-right:10px" onclick="toast('Wysyłanie do US...')">📤 Wyślij</span><span style="color:var(--a);cursor:pointer;font-size:12px" onclick="toast('Pobieranie...')">⬇</span></td></tr>
+        <tr><td>📄 akt_notarialny_marzec.pdf</td><td><span class="pill-b">PDF</span></td><td>2.8 MB</td><td>05.05.2026</td><td><span style="color:var(--a);cursor:pointer;font-size:12px;margin-right:10px" onclick="nav('ai');showAnalysis('akt_notarialny.pdf')">🤖 Analizuj</span><span style="color:var(--a);cursor:pointer;font-size:12px" onclick="toast('Pobieranie...')">⬇</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ REPORTS PANEL ══ -->
+  <div class="panel" id="panel-reports">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+      <div><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--tx)">Raporty finansowe</div><div style="font-size:13px;color:var(--mu);margin-top:2px">Maj 2026</div></div>
+      <div style="display:flex;gap:10px"><button class="filter-btn on">Maj 2026</button><button class="btn-add" onclick="generateReport()">📊 Generuj raport PDF</button></div>
+    </div>
+    <div class="kpi-grid" style="margin-bottom:20px">
+      <div class="kpi" style="--kc:linear-gradient(90deg,var(--green),var(--teal))"><div class="kpi-icon">💰</div><div class="kpi-label">Przychody</div><div class="kpi-val">84 200 zł</div><div class="kpi-change" style="color:var(--green)">▲ +12%</div></div>
+      <div class="kpi" style="--kc:linear-gradient(90deg,var(--red),#f97316)"><div class="kpi-icon">💸</div><div class="kpi-label">Koszty</div><div class="kpi-val">31 400 zł</div><div class="kpi-change" style="color:var(--red)">▲ +4%</div></div>
+      <div class="kpi" style="--kc:linear-gradient(90deg,var(--a),var(--a2))"><div class="kpi-icon">📈</div><div class="kpi-label">Zysk netto</div><div class="kpi-val">52 800 zł</div><div class="kpi-change" style="color:var(--green)">▲ +18%</div></div>
+      <div class="kpi" style="--kc:linear-gradient(90deg,var(--yellow),#f97316)"><div class="kpi-icon">🏛</div><div class="kpi-label">VAT do zapłaty</div><div class="kpi-val">14 220 zł</div><div class="kpi-change" style="color:var(--yellow)">Termin: 25.06</div></div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-h"><div class="card-t">Przychody vs Koszty (2026)</div></div>
+        <div class="chart-wrap">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1"><div class="bar main-bar" style="height:55%;width:40%;margin:0 auto"></div><div class="bar" style="height:40%;width:40%;margin:0 auto;background:rgba(239,68,68,.3)"></div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1"><div class="bar main-bar" style="height:62%;width:40%;margin:0 auto"></div><div class="bar" style="height:44%;width:40%;margin:0 auto;background:rgba(239,68,68,.3)"></div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1"><div class="bar main-bar" style="height:58%;width:40%;margin:0 auto"></div><div class="bar" style="height:38%;width:40%;margin:0 auto;background:rgba(239,68,68,.3)"></div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1"><div class="bar main-bar" style="height:70%;width:40%;margin:0 auto"></div><div class="bar" style="height:42%;width:40%;margin:0 auto;background:rgba(239,68,68,.3)"></div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1"><div class="bar cur-bar" style="height:90%;width:40%;margin:0 auto"></div><div class="bar" style="height:48%;width:40%;margin:0 auto;background:rgba(239,68,68,.4)"></div></div>
+        </div>
+        <div class="chart-labels"><span>Styczeń</span><span>Luty</span><span>Marzec</span><span>Kwiecień</span><span style="color:var(--a)">Maj</span></div>
+        <div style="display:flex;gap:16px;margin-top:12px">
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mu)"><div style="width:10px;height:10px;background:var(--a);border-radius:2px"></div>Przychody</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mu)"><div style="width:10px;height:10px;background:rgba(239,68,68,.5);border-radius:2px"></div>Koszty</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><div class="card-t">Struktura kosztów</div></div>
+        <div class="act-list">
+          <div class="act-item"><div class="act-icon b">🏢</div><div class="act-info"><div class="act-name">Wynajem biura</div><div class="act-sub"><div class="prog-wrap" style="margin-top:4px"><div class="prog-fill" style="width:38%"></div></div></div></div><div class="act-val neu">11 800 zł</div></div>
+          <div class="act-item"><div class="act-icon g">👥</div><div class="act-info"><div class="act-name">Wynagrodzenia</div><div class="act-sub"><div class="prog-wrap" style="margin-top:4px"><div class="prog-fill" style="width:60%;background:linear-gradient(90deg,var(--green),var(--teal))"></div></div></div></div><div class="act-val neu">18 900 zł</div></div>
+          <div class="act-item"><div class="act-icon y">🛒</div><div class="act-info"><div class="act-name">Zakupy / materiały</div><div class="act-sub"><div class="prog-wrap" style="margin-top:4px"><div class="prog-fill" style="width:20%;background:linear-gradient(90deg,#eab308,#f97316)"></div></div></div></div><div class="act-val neu">4 200 zł</div></div>
+          <div class="act-item"><div class="act-icon r">💻</div><div class="act-info"><div class="act-name">Oprogramowanie</div><div class="act-sub"><div class="prog-wrap" style="margin-top:4px"><div class="prog-fill" style="width:8%;background:linear-gradient(90deg,var(--a2),#9333ea)"></div></div></div></div><div class="act-val neu">2 100 zł</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ EXPENSES PANEL ══ -->
+  <div class="panel" id="panel-expenses">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+      <div><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--tx)">Wydatki</div><div style="font-size:13px;color:var(--mu);margin-top:2px">Maj 2026 · 31 400 zł łącznie</div></div>
+      <button class="btn-add" onclick="toast('Dodawanie wydatku...')">+ Nowy wydatek</button>
+    </div>
+    <div class="card">
+      <table class="tbl">
+        <tr><th>Opis</th><th>Kategoria</th><th>Data</th><th>Kwota</th><th>Dokument</th></tr>
+        <tr><td>Czynsz biuro — maj</td><td><span class="pill-b">Nieruchomości</span></td><td>01.05.2026</td><td>11 800 zł</td><td><span style="color:var(--a);cursor:pointer;font-size:12px" onclick="toast('Pobieranie...')">📄 Faktura</span></td></tr>
+        <tr><td>Wynagrodzenia — maj</td><td><span class="pill-g">HR</span></td><td>28.05.2026</td><td>18 900 zł</td><td><span style="color:var(--mu);font-size:12px">—</span></td></tr>
+        <tr><td>Adobe Creative Cloud</td><td><span class="pill-y">Oprogramowanie</span></td><td>05.05.2026</td><td>350 zł</td><td><span style="color:var(--a);cursor:pointer;font-size:12px" onclick="toast('Pobieranie...')">📄 Faktura</span></td></tr>
+        <tr><td>Paliwo — samochód służbowy</td><td><span class="pill-r">Transport</span></td><td>12.05.2026</td><td>680 zł</td><td><span style="color:var(--a);cursor:pointer;font-size:12px" onclick="toast('Pobieranie...')">📄 Paragon</span></td></tr>
+        <tr><td>Internet i telefon</td><td><span class="pill-b">Telekomunikacja</span></td><td>10.05.2026</td><td>240 zł</td><td><span style="color:var(--a);cursor:pointer;font-size:12px" onclick="toast('Pobieranie...')">📄 Faktura</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ JPK PANEL ══ -->
+  <div class="panel" id="panel-jpk">
+    <div style="margin-bottom:20px"><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--tx)">JPK / Urząd Skarbowy</div><div style="font-size:13px;color:var(--mu);margin-top:2px">Składanie i historia deklaracji</div></div>
+    <div class="grid3">
+      <div class="card" style="cursor:pointer" onclick="exportJPK()"><div style="font-size:28px;margin-bottom:10px">📤</div><div style="font-family:'Syne',sans-serif;font-size:15px;color:var(--tx);margin-bottom:6px">JPK_VAT</div><div style="font-size:12px;color:var(--mu)">Wygeneruj i wyślij plik JPK_VAT za wybrany miesiąc</div><div class="pill-y" style="margin-top:12px;display:inline-block">Termin: 25.06.2026</div></div>
+      <div class="card" style="cursor:pointer" onclick="toast('Generowanie JPK_FA...')"><div style="font-size:28px;margin-bottom:10px">📄</div><div style="font-family:'Syne',sans-serif;font-size:15px;color:var(--tx);margin-bottom:6px">JPK_FA</div><div style="font-size:12px;color:var(--mu)">Ewidencja faktur sprzedaży i zakupu</div><div class="pill-g" style="margin-top:12px;display:inline-block">Gotowy do wysyłki</div></div>
+      <div class="card" style="cursor:pointer" onclick="toast('Otwieranie e-Deklaracje...')"><div style="font-size:28px;margin-bottom:10px">🏛</div><div style="font-family:'Syne',sans-serif;font-size:15px;color:var(--tx);margin-bottom:6px">e-Deklaracje</div><div style="font-size:12px;color:var(--mu)">Składanie PIT, CIT, VAT-7 online</div><div class="pill-b" style="margin-top:12px;display:inline-block">Połączony z MF</div></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <div class="card-h"><div class="card-t">Historia wysyłek</div></div>
+      <table class="tbl">
+        <tr><th>Deklaracja</th><th>Okres</th><th>Wysłano</th><th>Status</th><th>Ref. numer</th></tr>
+        <tr><td>JPK_VAT7M</td><td>Kwiecień 2026</td><td>22.05.2026</td><td><span class="pill-g">Zaakceptowana</span></td><td style="font-size:11px;color:var(--mu)">UPO/2026/05/4421</td></tr>
+        <tr><td>JPK_VAT7M</td><td>Marzec 2026</td><td>23.04.2026</td><td><span class="pill-g">Zaakceptowana</span></td><td style="font-size:11px;color:var(--mu)">UPO/2026/04/3891</td></tr>
+        <tr><td>JPK_FA</td><td>Q1 2026</td><td>15.04.2026</td><td><span class="pill-g">Zaakceptowana</span></td><td style="font-size:11px;color:var(--mu)">UPO/2026/04/3210</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ NOTIFICATIONS PANEL ══ -->
+  <div class="panel" id="panel-notifications">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--tx)">Powiadomienia</div><div style="font-size:13px;color:var(--mu);margin-top:2px">3 nieprzeczytane</div></div>
+      <button class="filter-btn" onclick="markAllRead()">Oznacz wszystkie jako przeczytane</button>
+    </div>
+    <div class="notif-list">
+      <div class="notif unread"><span class="notif-icon">⚠️</span><div class="notif-body"><div class="notif-text">Faktura FV/2026/05/041 (1 350 zł) jest przeterminowana o 3 dni. Wyślij przypomnienie do klienta.</div><div class="notif-time">18 maja 2026, 09:14</div></div><div class="notif-dot"></div></div>
+      <div class="notif unread"><span class="notif-icon">🏛</span><div class="notif-body"><div class="notif-text">Termin złożenia JPK_VAT za maj 2026 — 25 czerwca 2026. Pozostało 38 dni.</div><div class="notif-time">18 maja 2026, 08:00</div></div><div class="notif-dot"></div></div>
+      <div class="notif unread"><span class="notif-icon">✅</span><div class="notif-body"><div class="notif-text">TechStart Sp. z o.o. opłaciła fakturę FV/2026/05/047 na kwotę 4 800 zł.</div><div class="notif-time">18 maja 2026, 07:45</div></div><div class="notif-dot"></div></div>
+      <div class="notif read"><span class="notif-icon">🤖</span><div class="notif-body"><div class="notif-text">Analiza AI dokumentu "umowa_najmu.pdf" zakończona. Wykryto 2 ryzyka — sprawdź rekomendacje.</div><div class="notif-time">17 maja 2026, 16:30</div></div></div>
+      <div class="notif read"><span class="notif-icon">🏦</span><div class="notif-body"><div class="notif-text">Synchronizacja z PKO BP zakończona. 18 nowych transakcji zostało dopasowanych do faktur.</div><div class="notif-time">17 maja 2026, 14:12</div></div></div>
+      <div class="notif read"><span class="notif-icon">📊</span><div class="notif-body"><div class="notif-text">Raport miesięczny za kwiecień 2026 jest gotowy. Zysk netto: +18% vs marzec.</div><div class="notif-time">01 maja 2026, 09:00</div></div></div>
+    </div>
+  </div>
+
+  <!-- ══ SETTINGS PANEL ══ -->
+  <div class="panel" id="panel-settings">
+    <div style="margin-bottom:20px"><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--tx)">Ustawienia</div></div>
+    <div class="settings-nav">
+      <button class="s-tab on" onclick="setStab(this,'s-profile')">Profil</button>
+      <button class="s-tab" onclick="setStab(this,'s-firm')">Firma</button>
+      <button class="s-tab" onclick="setStab(this,'s-notifs')">Powiadomienia</button>
+      <button class="s-tab" onclick="setStab(this,'s-security')">Bezpieczeństwo</button>
+      <button class="s-tab" onclick="setStab(this,'s-plan')">Plan i płatności</button>
+    </div>
+    <!-- PROFILE -->
+    <div id="s-profile">
+      <div class="grid2">
+        <div>
+          <div class="s-section-t">Dane osobowe</div>
+          <div class="fg"><label>Imię</label><input class="s-input" style="width:100%" value="Jan"/></div>
+          <div class="fg"><label>Nazwisko</label><input class="s-input" style="width:100%" value="Kowalski"/></div>
+          <div class="fg"><label>E-mail</label><input class="s-input" style="width:100%" value="jan@firma.pl"/></div>
+          <div class="fg"><label>Telefon</label><input class="s-input" style="width:100%" value="+48 600 123 456"/></div>
+          <button class="s-save" onclick="toast('Dane zapisane ✓')">Zapisz zmiany</button>
+        </div>
+        <div>
+          <div class="s-section-t">Preferencje</div>
+          <div class="s-row"><div><div class="s-label">Język interfejsu</div></div><select class="s-input"><option>Polski</option><option>English</option></select></div>
+          <div class="s-row"><div><div class="s-label">Waluta</div></div><select class="s-input"><option>PLN</option><option>EUR</option><option>USD</option></select></div>
+          <div class="s-row"><div><div class="s-label">Strefa czasowa</div></div><select class="s-input"><option>Europe/Warsaw (UTC+2)</option></select></div>
+          <div class="s-row"><div><div class="s-label">Tryb ciemny</div><div class="s-sub">Zawsze włączony</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+        </div>
+      </div>
+    </div>
+    <!-- FIRM -->
+    <div id="s-firm" style="display:none">
+      <div class="s-section-t">Dane firmy</div>
+      <div class="grid2">
+        <div>
+          <div class="fg"><label>Nazwa firmy</label><input class="s-input" style="width:100%" value="Moja Firma Sp. z o.o."/></div>
+          <div class="fg"><label>NIP</label><input class="s-input" style="width:100%" value="1234567890"/></div>
+          <div class="fg"><label>REGON</label><input class="s-input" style="width:100%" value="123456789"/></div>
+          <div class="fg"><label>KRS</label><input class="s-input" style="width:100%" value="0000123456"/></div>
+        </div>
+        <div>
+          <div class="fg"><label>Adres</label><input class="s-input" style="width:100%" value="ul. Złota 59a"/></div>
+          <div class="fg"><label>Miasto</label><input class="s-input" style="width:100%" value="Warszawa"/></div>
+          <div class="fg"><label>Kod pocztowy</label><input class="s-input" style="width:100%" value="00-120"/></div>
+          <div class="fg"><label>Bank (IBAN)</label><input class="s-input" style="width:100%" value="PL 61 1090 1014 0000 0712 1981 2874"/></div>
+        </div>
+      </div>
+      <button class="s-save" onclick="toast('Dane firmy zapisane ✓')">Zapisz zmiany</button>
+    </div>
+    <!-- NOTIFICATIONS -->
+    <div id="s-notifs" style="display:none">
+      <div class="s-section-t">Powiadomienia e-mail</div>
+      <div class="s-row"><div><div class="s-label">Nowa płatność</div><div class="s-sub">Gdy klient opłaci fakturę</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+      <div class="s-row"><div><div class="s-label">Przeterminowane faktury</div><div class="s-sub">Przypomnienie 3 dni przed terminem</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+      <div class="s-row"><div><div class="s-label">Terminy podatkowe</div><div class="s-sub">JPK, VAT-7, ZUS — 7 dni przed</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+      <div class="s-row"><div><div class="s-label">Raport miesięczny</div><div class="s-sub">Automatyczny raport co 1. dnia miesiąca</div></div><button class="toggle" onclick="this.classList.toggle('on')"></button></div>
+      <div class="s-row"><div><div class="s-label">Newsletter Velqora</div><div class="s-sub">Porady, aktualizacje, nowości</div></div><button class="toggle" onclick="this.classList.toggle('on')"></button></div>
+    </div>
+    <!-- SECURITY -->
+    <div id="s-security" style="display:none">
+      <div class="s-section-t">Bezpieczeństwo</div>
+      <div class="s-row"><div><div class="s-label">Zmień hasło</div></div><button class="s-save" onclick="toast('Link do zmiany hasła wysłany na e-mail')">Wyślij link</button></div>
+      <div class="s-row"><div><div class="s-label">Weryfikacja dwuetapowa (2FA)</div><div class="s-sub">SMS lub aplikacja authenticator</div></div><button class="toggle" onclick="this.classList.toggle('on');toast('2FA '+(this.classList.contains('on')?'włączone':'wyłączone'))"></button></div>
+      <div class="s-row"><div><div class="s-label">Aktywne sesje</div><div class="s-sub">Chrome / Windows · Warszawa · Teraz</div></div><button class="filter-btn" onclick="toast('Wylogowano ze wszystkich urządzeń')">Wyloguj inne</button></div>
+    </div>
+    <!-- PLAN -->
+    <div id="s-plan" style="display:none">
+      <div class="s-section-t">Twój plan</div>
+      <div class="card" style="margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+        <div><div style="font-family:'Syne',sans-serif;font-size:20px;color:var(--a);font-weight:800">Plan Pro</div><div style="font-size:13px;color:var(--mu);margin-top:4px">199 zł / mies. · Odnawia się 01.06.2026</div><div class="prog-wrap" style="width:200px;margin-top:10px"><div class="prog-fill" style="width:62%"></div></div><div style="font-size:11px;color:var(--mu);margin-top:4px">31 / 50 analiz AI tego miesiąca</div></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="s-save" onclick="toast('Przekierowanie do płatności...')">Ulepsz do Business</button><button class="filter-btn" onclick="toast('Anulowanie wymaga potwierdzenia e-mailem')">Anuluj plan</button></div>
+      </div>
+      <div class="s-section-t">Historia płatności</div>
+      <table class="tbl">
+        <tr><th>Data</th><th>Plan</th><th>Kwota</th><th>Status</th><th>Faktura</th></tr>
+        <tr><td>01.05.2026</td><td>Pro</td><td>199 zł</td><td><span class="pill-g">Zapłacona</span></td><td><span style="color:var(--a);cursor:pointer;font-size:12px" onclick="toast('Pobieranie faktury...')">⬇ PDF</span></td></tr>
+        <tr><td>01.04.2026</td><td>Pro</td><td>199 zł</td><td><span class="pill-g">Zapłacona</span></td><td><span style="color:var(--a);cursor:pointer;font-size:12px" onclick="toast('Pobieranie faktury...')">⬇ PDF</span></td></tr>
+        <tr><td>01.03.2026</td><td>Basic</td><td>79 zł</td><td><span class="pill-g">Zapłacona</span></td><td><span style="color:var(--a);cursor:pointer;font-size:12px" onclick="toast('Pobieranie faktury...')">⬇ PDF</span></td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── NAVIGATION ──
+const panels={dashboard:'Dashboard',invoices:'Faktury',ai:'AI Analiza',documents:'Dokumenty',reports:'Raporty',expenses:'Wydatki',jpk:'JPK / Urząd Skarbowy',notifications:'Powiadomienia',settings:'Ustawienia'};
+function nav(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('show'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('act'));
+  const p=document.getElementById('panel-'+id);
+  if(p)p.classList.add('show');
+  document.getElementById('page-title').textContent=panels[id]||id;
+  document.querySelectorAll('.ni').forEach(n=>{if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+id+"'"))n.classList.add('act');});
+  document.getElementById('mob-overlay')&&document.getElementById('mob-overlay').classList.remove('show');
+  closeMobSb();
+}
+
+// ── SIDEBAR TOGGLE ──
+let sbOpen=true;
+function toggleSb(){sbOpen=!sbOpen;document.getElementById('sb').classList.toggle('collapsed',!sbOpen);document.getElementById('sb-toggle').textContent=sbOpen?'◀':'▶';}
+function toggleMobSb(){document.getElementById('sb').classList.toggle('mob-open');}
+function closeMobSb(){document.getElementById('sb').classList.remove('mob-open');}
+
+// ── TOAST ──
+function toast(msg,type='ok'){const t=document.getElementById('toast');t.textContent=msg;t.style.borderColor=type==='err'?'rgba(239,68,68,.4)':'rgba(79,127,255,.35)';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+// ── MODAL ──
+function openModal(id){document.getElementById(id).classList.add('show');const d=document.getElementById('inv-date');if(d)d.value=new Date().toISOString().split('T')[0];}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show');}));
+
+// ── INVOICE ──
+function saveInvoice(){
+  const num=document.getElementById('inv-num').value;
+  const client=document.getElementById('inv-client').value;
+  if(!client){toast('Podaj kontrahenta','err');return;}
+  closeModal('modal-inv');
+  toast('✅ Faktura '+num+' zapisana!');
+}
+function setFilter(btn,f){document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');toast('Filtr: '+f);}
+
+// ── PRICING TOGGLE ──
+function setP(m){document.getElementById('tm')&&document.getElementById('tm').classList.toggle('on',m==='m');document.getElementById('ty')&&document.getElementById('ty').classList.toggle('on',m==='y');}
+
+// ── AI ANALYSIS ──
+const DEMO_ANALYSIS=`**TYP DOKUMENTU**\nUmowa najmu lokalu komercyjnego
+
+**STRONY UMOWY**\n• Wynajmujący: NIERUCHOMOŚCI PREMIUM Sp. z o.o., NIP: 9876543210\n• Najemca: Moja Firma Sp. z o.o., NIP: 1234567890
+
+**KLUCZOWE KLAUZULE**\n• Okres najmu: 01.06.2026 – 31.05.2028 (24 miesiące)\n• Czynsz: 11 800 zł netto/mies. + VAT 23%\n• Kaucja: 3-miesięczny czynsz (35 400 zł)\n• Indeksacja roczna: zgodnie z wskaźnikiem GUS
+
+**⚠️ RYZYKA I UWAGI**\n• Brak klauzuli o wypowiedzeniu przed terminem — ryzyko po stronie Najemcy\n• Zakaz podnajmu bez pisemnej zgody — może ograniczać elastyczność\n• Kara umowna za wcześniejsze opuszczenie: 6 miesięcy czynszu
+
+**✅ REKOMENDACJE**\n• Negocjować klauzulę wypowiedzenia z 3-miesięcznym wyprzedzeniem\n• Doprecyzować zakres prac adaptacyjnych na koszt Wynajmującego`;
+
+function analyzeDoc(inp){
+  if(!inp.files[0])return;
+  const name=inp.files[0].name;
+  document.getElementById('ai-content').innerHTML='<div class="ai-thinking"><div class="ai-spinner"></div><div style="font-size:13px;color:var(--mu)">Analizuję '+name+'…</div></div>';
+  setTimeout(()=>{showAnalysis(name);addToHistory(name);},2200);
+}
+function dropFile(e){e.preventDefault();document.getElementById('dz').classList.remove('drag');const f=e.dataTransfer.files[0];if(f){const fake={files:[f]};analyzeDoc(fake);}}
+function showAnalysis(name){
+  const lines=DEMO_ANALYSIS.split('\n');
+  let html='';
+  lines.forEach(l=>{
+    if(!l.trim()){html+='<div style="height:6px"></div>';return;}
+    if(l.startsWith('**')&&l.endsWith('**')){html+=`<div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--tx);border-bottom:1px solid var(--br);padding-bottom:5px;margin:16px 0 7px">${l.replace(/\*\*/g,'')}</div>`;return;}
+    if(l.startsWith('• ')||l.startsWith('- ')){html+=`<div style="display:flex;gap:6px;margin:3px 0;font-size:13px;color:var(--mu)"><span style="color:var(--a)">›</span><span>${l.slice(2)}</span></div>`;return;}
+    html+=`<p style="font-size:13px;color:var(--mu);margin:3px 0;line-height:1.6">${l}</p>`;
+  });
+  document.getElementById('ai-content').innerHTML=`<div style="line-height:1.7">${html}</div>`;
+  document.getElementById('ai-qa').style.display='block';
+  document.getElementById('file-inp').value='';
+}
+function addToHistory(name){
+  const hist=document.getElementById('ai-hist');
+  const item=document.createElement('div');
+  item.className='ai-hist-item';
+  item.innerHTML=`<span>📄</span><div style="flex:1"><div style="font-size:13px;color:var(--tx)">${name}</div><div style="font-size:11px;color:var(--mu)">przed chwilą · nowy</div></div><span class="pill-g">Gotowe</span>`;
+  item.onclick=()=>showAnalysis(name);
+  hist.insertBefore(item,hist.firstChild);
+  toast('✅ Analiza '+name+' gotowa!');
+}
+function askAI(){
+  const q=document.getElementById('ai-q').value.trim();
+  if(!q)return;
+  document.getElementById('ai-q').value='';
+  const container=document.getElementById('ai-content');
+  const qEl=document.createElement('div');
+  qEl.style.cssText='margin-top:14px;padding:10px 12px;background:rgba(79,127,255,.07);border-radius:8px;font-size:13px;color:var(--tx);font-style:italic;border-left:3px solid var(--a)';
+  qEl.textContent='💬 '+q;
+  container.appendChild(qEl);
+  const aEl=document.createElement('div');
+  aEl.style.cssText='margin-top:6px;padding:10px 12px;background:rgba(255,255,255,.02);border-radius:8px;font-size:13px;color:var(--mu)';
+  aEl.textContent='🤖 Analizuję zapytanie…';
+  container.appendChild(aEl);
+  container.scrollTop=container.scrollHeight;
+  setTimeout(()=>{aEl.textContent='🤖 Na podstawie dokumentu: '+getAIAnswer(q);container.scrollTop=container.scrollHeight;},1200);
+}
+function getAIAnswer(q){
+  const ql=q.toLowerCase();
+  if(ql.includes('kara')||ql.includes('kary'))return'Kara umowna za wcześniejsze opuszczenie lokalu wynosi równowartość 6-miesięcznego czynszu (70 800 zł netto).';
+  if(ql.includes('czynsz')||ql.includes('kwota')||ql.includes('ile'))return'Czynsz wynosi 11 800 zł netto + VAT 23% = 14 514 zł brutto miesięcznie. Indeksacja roczna wg GUS.';
+  if(ql.includes('kiedy')||ql.includes('termin')||ql.includes('wygasa'))return'Umowa obowiązuje od 01.06.2026 do 31.05.2028 — łącznie 24 miesiące.';
+  if(ql.includes('kaucja'))return'Kaucja wynosi 3-miesięczny czynsz netto: 35 400 zł, płatna przed podpisaniem umowy.';
+  return'Na podstawie dokumentu: ta kwestia nie jest wprost uregulowana — zalecam konsultację z radcą prawnym przed podpisaniem.';
+}
+
+// ── OTHER ──
+function exportJPK(){toast('📤 Generowanie pliku JPK_VAT za maj 2026...');setTimeout(()=>toast('✅ Plik JPK_VAT gotowy do wysyłki!'),2000);}
+function syncBank(){toast('🏦 Synchronizacja z bankiem...');setTimeout(()=>toast('✅ Sync zakończony — 5 nowych transakcji'),1800);}
+function generateReport(){toast('📊 Generowanie raportu PDF...');setTimeout(()=>toast('✅ Raport gotowy!'),2000);}
+function searchItems(v){if(v.length>2)toast('Wyszukiwanie: "'+v+'"');}
+function markAllRead(){document.querySelectorAll('.notif.unread').forEach(n=>{n.classList.remove('unread');n.classList.add('read');});document.querySelectorAll('.notif-dot').forEach(d=>d.remove());document.querySelector('.topbar .tb-notif-dot').style.display='none';toast('✅ Wszystkie powiadomienia oznaczone jako przeczytane');}
+
+// ── SETTINGS TABS ──
+function setStab(btn,id){document.querySelectorAll('.s-tab').forEach(t=>t.classList.remove('on'));btn.classList.add('on');['s-profile','s-firm','s-notifs','s-security','s-plan'].forEach(s=>{const el=document.getElementById(s);if(el)el.style.display=s===id?'block':'none';});}
+
+// ── CLOSE SIDEBAR ON OUTSIDE CLICK (mobile) ──
+document.getElementById('main').addEventListener('click',()=>{if(window.innerWidth<=900)closeMobSb();});
+</script>
+</body>
+</html>
