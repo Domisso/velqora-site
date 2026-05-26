@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Velqora — Dashboard</title>
+<!-- FINAL KSEF BUILD v2 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
@@ -268,6 +269,8 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;displ
     <div class="ni" onclick="nav('reports')"><span class="icon">📈</span><span class="nav-label">Raporty</span></div>
     <div class="ni" onclick="nav('expenses')"><span class="icon">💳</span><span class="nav-label">Wydatki</span></div>
     <div class="ni" onclick="nav('jpk')"><span class="icon">🏛</span><span class="nav-label">JPK / US</span></div>
+    <div class="ni" onclick="nav('ksef')"><span class="icon">🏛️</span><span class="nav-label">KSeF</span></div>
+
     <div class="nav-section">Konto</div>
     <div class="ni" onclick="nav('notifications')"><span class="icon">🔔</span><span class="nav-label">Powiadomienia</span><span class="badge" style="background:var(--red)">3</span></div>
     <div class="ni" onclick="nav('settings')"><span class="icon">⚙️</span><span class="nav-label">Ustawienia</span></div>
@@ -584,7 +587,121 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;displ
     </div>
   </div>
 
-  <!-- ══ NOTIFICATIONS PANEL ══ -->
+  
+  
+<!-- ══ KSEF PANEL ══ -->
+<div class="panel" id="panel-ksef">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+    <div>
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--tx)">
+        KSeF
+      </div>
+
+      <div style="font-size:13px;color:var(--mu);margin-top:2px">
+        Integracja z Krajowym Systemem e‑Faktur
+      </div>
+    </div>
+
+    <button class="btn-add" onclick="toast('Łączenie z KSeF...')">
+      🔗 Połącz z KSeF
+    </button>
+  </div>
+
+  <div class="grid3">
+
+    <div class="card">
+      <div style="font-size:28px;margin-bottom:10px">📤</div>
+
+      <div style="font-family:'Syne',sans-serif;font-size:15px;color:var(--tx);margin-bottom:6px">
+        Wyślij fakturę
+      </div>
+
+      <div style="font-size:12px;color:var(--mu)">
+        Eksport XML i wysyłka do MF
+      </div>
+
+      <div class="pill-g" style="margin-top:14px;display:inline-block">
+        GOTOWE
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:28px;margin-bottom:10px">📥</div>
+
+      <div style="font-family:'Syne',sans-serif;font-size:15px;color:var(--tx);margin-bottom:6px">
+        Synchronizacja
+      </div>
+
+      <div style="font-size:12px;color:var(--mu)">
+        Pobieranie statusów i UPO
+      </div>
+
+      <div class="pill-b" style="margin-top:14px;display:inline-block">
+        ONLINE
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:28px;margin-bottom:10px">🏛️</div>
+
+      <div style="font-family:'Syne',sans-serif;font-size:15px;color:var(--tx);margin-bottom:6px">
+        Sesja MF
+      </div>
+
+      <div style="font-size:12px;color:var(--mu)">
+        Token i połączenie aktywne
+      </div>
+
+      <div class="pill-g" style="margin-top:14px;display:inline-block">
+        AKTYWNA
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card" style="margin-top:16px">
+
+    <div class="card-h">
+      <div class="card-t">Ostatnie operacje KSeF</div>
+    </div>
+
+    <table class="tbl">
+      <tr>
+        <th>Dokument</th>
+        <th>Data</th>
+        <th>Status</th>
+        <th>UPO</th>
+      </tr>
+
+      <tr>
+        <td>FV/2026/05/048</td>
+        <td>18.05.2026</td>
+        <td><span class="pill-g">Wysłano</span></td>
+        <td>UPO/5521</td>
+      </tr>
+
+      <tr>
+        <td>FV/2026/05/047</td>
+        <td>18.05.2026</td>
+        <td><span class="pill-g">Zaakceptowano</span></td>
+        <td>UPO/5518</td>
+      </tr>
+
+      <tr>
+        <td>FV/2026/05/046</td>
+        <td>17.05.2026</td>
+        <td><span class="pill-y">Oczekuje</span></td>
+        <td>—</td>
+      </tr>
+    </table>
+
+  </div>
+
+</div>
+
+
+<!-- ══ NOTIFICATIONS PANEL ══ -->
   <div class="panel" id="panel-notifications">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
       <div><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--tx)">Powiadomienia</div><div style="font-size:13px;color:var(--mu);margin-top:2px">3 nieprzeczytane</div></div>
@@ -685,7 +802,7 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;displ
 
 <script>
 // ── NAVIGATION ──
-const panels={dashboard:'Dashboard',invoices:'Faktury',ai:'AI Analiza',documents:'Dokumenty',reports:'Raporty',expenses:'Wydatki',jpk:'JPK / Urząd Skarbowy',notifications:'Powiadomienia',settings:'Ustawienia'};
+const panels={dashboard:'Dashboard',invoices:'Faktury',ai:'AI Analiza',documents:'Dokumenty',reports:'Raporty',expenses:'Wydatki',jpk:'JPK / Urząd Skarbowy',ksef:'KSeF',notifications:'Powiadomienia',settings:'Ustawienia'};
 function nav(id){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('show'));
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('act'));
