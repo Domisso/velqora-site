@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Velqora Blog — Wiedza o księgowości i AI dla firm</title>
+<meta name="description" content="Praktyczne porady o księgowości, KSeF, fakturach i AI dla przedsiębiorców. Blog Velqora."/>
+<link rel="canonical" href="https://velqora.pl/blog"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#05060a;--bg2:#080a10;--bg3:#0d1018;--a:#4f7fff;--a2:#7b5fff;--teal:#2dd4bf;--tx:#eef0f6;--mu:#5a6080;--br:rgba(79,127,255,.14)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif}
+nav{padding:20px 60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--br);position:sticky;top:0;z-index:100;background:rgba(5,6,10,.92);backdrop-filter:blur(20px)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.lm{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,var(--a),var(--a2));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:#fff}
+.ln{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;color:var(--tx)}
+.nav-r{display:flex;gap:14px;align-items:center}
+.nav-r a{font-size:13px;color:var(--mu);text-decoration:none;transition:color .2s}
+.nav-r a:hover{color:var(--tx)}
+.btn-n{background:var(--a);color:#fff;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:500;text-decoration:none}
+
+/* HERO */
+.blog-hero{padding:72px 60px 56px;border-bottom:1px solid var(--br)}
+.blog-hero-in{max-width:1060px;margin:0 auto}
+.blog-hero .ey{font-size:11px;color:var(--a);letter-spacing:.14em;text-transform:uppercase;font-weight:600;margin-bottom:12px}
+.blog-hero h1{font-family:'Syne',sans-serif;font-size:clamp(32px,4vw,52px);font-weight:800;letter-spacing:-.02em;line-height:1.1;color:var(--tx);margin-bottom:14px}
+.blog-hero p{font-size:16px;color:var(--mu);max-width:500px;line-height:1.7}
+
+/* CATEGORIES */
+.cats{padding:20px 60px;border-bottom:1px solid var(--br);display:flex;gap:10px;flex-wrap:wrap;max-width:1180px;margin:0 auto}
+.cat{padding:7px 16px;border-radius:8px;border:1px solid var(--br);background:none;color:var(--mu);font-size:13px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.cat.on{background:rgba(79,127,255,.1);border-color:rgba(79,127,255,.3);color:var(--a)}
+.cat:hover{border-color:rgba(79,127,255,.25)}
+
+/* GRID */
+.blog-grid{max-width:1060px;margin:0 auto;padding:48px 60px 80px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.post-card{background:var(--bg3);border:1px solid var(--br);border-radius:18px;overflow:hidden;transition:all .3s;cursor:pointer;text-decoration:none;display:block}
+.post-card:hover{transform:translateY(-5px);border-color:rgba(79,127,255,.3);box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.post-card.featured{grid-column:1/-1}
+.post-cover{height:220px;display:flex;align-items:center;justify-content:center;font-size:72px;background:var(--bg2);position:relative;overflow:hidden}
+.post-card.featured .post-cover{height:280px}
+.cover-gradient{position:absolute;inset:0;opacity:.5}
+.post-body{padding:24px 26px 26px}
+.post-cat{font-size:10px;color:var(--a);letter-spacing:.12em;text-transform:uppercase;font-weight:600;margin-bottom:10px}
+.post-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--tx);line-height:1.25;margin-bottom:10px;letter-spacing:-.01em}
+.post-card.featured .post-title{font-size:26px}
+.post-excerpt{font-size:14px;color:var(--mu);line-height:1.7;margin-bottom:16px}
+.post-meta{display:flex;align-items:center;gap:14px;font-size:12px;color:var(--mu)}
+.post-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--a2));display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
+.read-more{color:var(--a);font-size:13px;font-weight:500}
+
+/* ARTICLE VIEW */
+.article-wrap{display:none;max-width:720px;margin:0 auto;padding:48px 60px 80px}
+.article-wrap.show{display:block}
+.blog-grid-wrap{display:block}
+.blog-grid-wrap.hide{display:none}
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--mu);cursor:pointer;margin-bottom:28px;transition:color .2s;background:none;border:none;font-family:'DM Sans',sans-serif;padding:0}
+.back-btn:hover{color:var(--a)}
+.art-cat{font-size:11px;color:var(--a);letter-spacing:.12em;text-transform:uppercase;font-weight:600;margin-bottom:12px}
+.art-title{font-family:'Syne',sans-serif;font-size:clamp(26px,3.5vw,40px);font-weight:800;color:var(--tx);line-height:1.15;margin-bottom:14px;letter-spacing:-.01em}
+.art-meta{display:flex;align-items:center;gap:16px;margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--br);flex-wrap:wrap}
+.art-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--a2));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+.art-author{font-size:14px;color:var(--tx);font-weight:500}
+.art-info{font-size:12px;color:var(--mu)}
+.art-cover{height:280px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:80px;background:var(--bg3);border:1px solid var(--br);margin-bottom:36px;overflow:hidden;position:relative}
+.art-body h2{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--tx);margin:36px 0 12px;letter-spacing:-.01em}
+.art-body h3{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:rgba(238,240,246,.85);margin:24px 0 8px}
+.art-body p{font-size:15px;color:var(--mu);line-height:1.85;margin-bottom:14px}
+.art-body ul,.art-body ol{padding-left:22px;margin-bottom:14px}
+.art-body li{font-size:15px;color:var(--mu);line-height:1.85;margin-bottom:4px}
+.art-body strong{color:rgba(238,240,246,.85)}
+.art-body .callout{background:rgba(79,127,255,.07);border-left:3px solid var(--a);border-radius:0 10px 10px 0;padding:14px 18px;margin:18px 0;font-size:14px;color:rgba(79,127,255,.9)}
+.share-row{display:flex;gap:10px;margin-top:40px;padding-top:24px;border-top:1px solid var(--br);align-items:center;flex-wrap:wrap}
+.share-row p{font-size:13px;color:var(--mu);margin:0}
+.share-btn{padding:8px 16px;border:1px solid var(--br);border-radius:8px;font-size:12px;color:var(--mu);cursor:pointer;background:none;transition:all .2s;font-family:'DM Sans',sans-serif}
+.share-btn:hover{border-color:rgba(79,127,255,.3);color:var(--tx)}
+
+/* CTA */
+.art-cta{background:linear-gradient(135deg,rgba(79,127,255,.1),rgba(123,95,255,.08));border:1px solid rgba(79,127,255,.25);border-radius:16px;padding:28px 32px;margin:40px 0;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.art-cta h3{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--tx);margin-bottom:6px}
+.art-cta p{font-size:13px;color:var(--mu);margin:0}
+.btn-cta{background:linear-gradient(135deg,var(--a),var(--a2));color:#fff;padding:11px 22px;border-radius:9px;font-size:13px;font-weight:600;text-decoration:none;white-space:nowrap;transition:all .2s}
+.btn-cta:hover{opacity:.9}
+
+/* FOOTER */
+footer{padding:40px 60px;border-top:1px solid var(--br);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.ft{font-size:12px;color:var(--mu)}
+.ft a{color:var(--a);text-decoration:none}
+
+@media(max-width:768px){nav,footer,.blog-hero,.cats{padding:16px 20px}.blog-grid,.article-wrap{padding:28px 20px}.blog-grid{grid-template-columns:1fr}.post-card.featured{grid-column:auto}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="index.html"><div class="lm">V</div><span class="ln">Velqora</span></a>
+  <div class="nav-r">
+    <a href="index.html">Strona główna</a>
+    <a href="index.html#cennik">Cennik</a>
+    <a href="api-docs.html">API</a>
+    <a href="login.html" class="btn-n">Zaloguj się</a>
+  </div>
+</nav>
+
+<!-- BLOG LIST -->
+<div class="blog-grid-wrap" id="blog-list">
+  <div class="blog-hero">
+    <div class="blog-hero-in">
+      <div class="ey">Blog Velqora</div>
+      <h1>Wiedza o księgowości<br/>i AI dla Twojej firmy</h1>
+      <p>Praktyczne porady, nowości w przepisach i jak AI zmienia branżę księgową.</p>
+    </div>
+  </div>
+
+  <div class="cats" style="padding:20px 60px">
+    <button class="cat on" onclick="filterCat(this,'all')">Wszystkie</button>
+    <button class="cat" onclick="filterCat(this,'ksef')">KSeF</button>
+    <button class="cat" onclick="filterCat(this,'ai')">AI w księgowości</button>
+    <button class="cat" onclick="filterCat(this,'faktury')">Faktury</button>
+    <button class="cat" onclick="filterCat(this,'poradnik')">Poradniki</button>
+  </div>
+
+  <div class="blog-grid" id="posts-grid">
+
+    <a class="post-card featured" onclick="openArticle('ksef-2026')">
+      <div class="post-cover">
+        🏛
+        <div class="cover-gradient" style="background:linear-gradient(135deg,rgba(79,127,255,.2),rgba(45,212,191,.15))"></div>
+      </div>
+      <div class="post-body">
+        <div class="post-cat">KSeF · Obowiązkowy od 2026</div>
+        <div class="post-title">KSeF 2026 — Kompletny przewodnik dla firm. Co musisz wiedzieć i jak się przygotować?</div>
+        <div class="post-excerpt">Od 1 lutego 2026 r. większość firm w Polsce zobowiązana jest do wystawiania faktur wyłącznie przez Krajowy System e-Faktur. Sprawdź co to oznacza dla Twojej firmy i jak przejść przez ten proces bezboleśnie.</div>
+        <div class="post-meta">
+          <div class="post-av">AK</div>
+          <span>Anna Kowalska · Ekspert podatkowy</span>
+          <span>·</span><span>14 min czytania</span>
+          <span>·</span><span>15 maja 2026</span>
+          <span class="read-more">Czytaj →</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="post-card" onclick="openArticle('ai-ksiegowosc')">
+      <div class="post-cover" style="height:180px">
+        🤖
+        <div class="cover-gradient" style="background:linear-gradient(135deg,rgba(123,95,255,.2),rgba(79,127,255,.15))"></div>
+      </div>
+      <div class="post-body">
+        <div class="post-cat">AI · Przyszłość księgowości</div>
+        <div class="post-title">Jak AI zmienia pracę księgowego w 2026 roku?</div>
+        <div class="post-excerpt">Automatyzacja kategoryzacji, analiza umów, wykrywanie błędów — AI nie zastępuje księgowego, ale sprawia że pracuje 10× efektywniej.</div>
+        <div class="post-meta">
+          <div class="post-av">PW</div>
+          <span>Piotr Wierzbicki</span>
+          <span>·</span><span>8 min</span>
+          <span class="read-more">Czytaj →</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="post-card" onclick="openArticle('jpk-vat')">
+      <div class="post-cover" style="height:180px">
+        📊
+        <div class="cover-gradient" style="background:linear-gradient(135deg,rgba(45,212,191,.15),rgba(79,127,255,.1))"></div>
+      </div>
+      <div class="post-body">
+        <div class="post-cat">Poradnik · JPK</div>
+        <div class="post-title">JPK_VAT 2026 — Jak wysłać bez błędów krok po kroku</div>
+        <div class="post-excerpt">Terminy, struktura pliku, najczęstsze błędy i jak je unikać. Praktyczny przewodnik dla małych firm i biur rachunkowych.</div>
+        <div class="post-meta">
+          <div class="post-av">MN</div>
+          <span>Marcin Nowak</span>
+          <span>·</span><span>6 min</span>
+          <span class="read-more">Czytaj →</span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<!-- ARTICLE VIEWS -->
+<div class="article-wrap" id="art-ksef-2026">
+  <button class="back-btn" onclick="closeArticle()">← Wróć do bloga</button>
+  <div class="art-cat">KSeF · Obowiązkowy od 2026</div>
+  <h1 class="art-title">KSeF 2026 — Kompletny przewodnik dla firm</h1>
+  <div class="art-meta">
+    <div class="art-av">AK</div>
+    <div><div class="art-author">Anna Kowalska</div><div class="art-info">Ekspert podatkowy · 15 maja 2026 · 14 min czytania</div></div>
+  </div>
+  <div class="art-cover">🏛<div class="cover-gradient" style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(79,127,255,.2),rgba(45,212,191,.15))"></div></div>
+  <div class="art-body">
+    <p>Od <strong>1 lutego 2026 r.</strong> większość polskich firm jest zobowiązana do wystawiania faktur wyłącznie przez Krajowy System e-Faktur (KSeF). To największa zmiana w polskim systemie podatkowym od lat. W tym artykule wyjaśniamy wszystko, co musisz wiedzieć.</p>
+    <div class="callout">💡 Velqora posiada pełną integrację z KSeF — Twoje faktury są wysyłane automatycznie po wystawieniu.</div>
+    <h2>Czym jest KSeF?</h2>
+    <p>KSeF to rządowa platforma Ministerstwa Finansów, która zastępuje papierowe i elektroniczne faktury PDF. Każda faktura musi przejść przez system MF, który nadaje jej unikalny numer KSeF potwierdzający jej autentyczność.</p>
+    <p>Podstawa prawna: <strong>ustawa z dnia 29 października 2021 r. o zmianie ustawy o podatku od towarów i usług</strong> oraz przepisy wykonawcze Ministerstwa Finansów.</p>
+    <h2>Kogo dotyczy obowiązek KSeF?</h2>
+    <ul>
+      <li><strong>Od 1 lutego 2026 r.</strong> — przedsiębiorcy aktywni podatnicy VAT o obrocie powyżej 200 tys. zł rocznie</li>
+      <li><strong>Od 1 kwietnia 2026 r.</strong> — wszyscy pozostali czynni podatnicy VAT</li>
+      <li><strong>Od 1 lipca 2026 r.</strong> — podatnicy zwolnieni z VAT (faktury do 450 zł)</li>
+    </ul>
+    <h3>Kto jest zwolniony?</h3>
+    <ul>
+      <li>Faktury dla osób fizycznych nieprowadzących działalności (B2C)</li>
+      <li>Faktury wystawiane przez nierezydentów niemających stałego miejsca prowadzenia działalności w Polsce</li>
+      <li>Faktury konsorcjów budowlanych (do 2027 r.)</li>
+    </ul>
+    <h2>Jak działa KSeF technicznie?</h2>
+    <p>Faktura musi być wystawiona w formacie <strong>XML FA(2)</strong> zgodnym ze schematem Ministerstwa Finansów. Następnie jest przesyłana przez API do systemu MF, który ją weryfikuje i nadaje numer KSeF (zazwyczaj w ciągu kilku sekund).</p>
+    <div class="callout">⚡ Velqora automatycznie konwertuje Twoje faktury do formatu FA(2) i wysyła je do KSeF — nie musisz znać specyfikacji technicznej.</div>
+    <h2>Jak przygotować firmę?</h2>
+    <ol>
+      <li><strong>Wygeneruj token autoryzacyjny</strong> na stronie ksef.mf.gov.pl (logowanie przez Profil Zaufany lub podpis kwalifikowany)</li>
+      <li><strong>Zaktualizuj oprogramowanie księgowe</strong> — upewnij się, że Twoje narzędzie obsługuje KSeF (Velqora ma pełną integrację)</li>
+      <li><strong>Uzupełnij NIP nabywców</strong> — faktury B2B bez NIP nie przejdą przez KSeF</li>
+      <li><strong>Przetestuj w środowisku testowym</strong> (ksef-test.mf.gov.pl) przed startem produkcyjnym</li>
+      <li><strong>Przeszkol pracowników</strong> — każdy wystawiający faktury musi znać nowy proces</li>
+    </ol>
+    <h2>Najczęstsze błędy przy wdrożeniu KSeF</h2>
+    <ul>
+      <li>Brak NIP nabywcy (lub nieprawidłowy NIP)</li>
+      <li>Nieprawidłowy format daty (wymagany: YYYY-MM-DD)</li>
+      <li>Brak wymaganych pól w schemacie FA(2)</li>
+      <li>Wystawianie faktur poza KSeF po dacie obowiązku</li>
+    </ul>
+    <h2>Kary za niezgodność z KSeF</h2>
+    <p>Od daty obowiązku, wystawienie faktury poza KSeF grozi karą <strong>do 100% podatku VAT</strong> wynikającego z faktury. Urząd Skarbowy może nie uznać odliczenia VAT z faktury wystawionej poza systemem.</p>
+    <div class="art-cta">
+      <div><h3>Gotowy na KSeF?</h3><p>Velqora automatycznie obsługuje wysyłkę do KSeF. Zacznij za darmo.</p></div>
+      <a href="login.html" class="btn-cta">Wypróbuj Velqora →</a>
+    </div>
+    <div class="share-row">
+      <p>Udostępnij artykuł:</p>
+      <button class="share-btn" onclick="navigator.clipboard.writeText(window.location.href);alert('Link skopiowany!')">🔗 Kopiuj link</button>
+      <button class="share-btn" onclick="window.open('https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent(window.location.href))">in LinkedIn</button>
+    </div>
+  </div>
+</div>
+
+<div class="article-wrap" id="art-ai-ksiegowosc">
+  <button class="back-btn" onclick="closeArticle()">← Wróć do bloga</button>
+  <div class="art-cat">AI · Przyszłość księgowości</div>
+  <h1 class="art-title">Jak AI zmienia pracę księgowego w 2026 roku?</h1>
+  <div class="art-meta">
+    <div class="art-av">PW</div>
+    <div><div class="art-author">Piotr Wierzbicki</div><div class="art-info">Właściciel biura rachunkowego · 10 maja 2026 · 8 min czytania</div></div>
+  </div>
+  <div class="art-cover">🤖<div class="cover-gradient" style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(123,95,255,.2),rgba(79,127,255,.15))"></div></div>
+  <div class="art-body">
+    <p>Jeszcze 3 lata temu sztuczna inteligencja w księgowości brzmiała jak science-fiction. Dziś <strong>ponad 40% biur rachunkowych</strong> w Polsce używa narzędzi AI do codziennej pracy. Co się zmieniło i jak wykorzystać tę rewolucję?</p>
+    <h2>Co AI potrafi zrobić już teraz?</h2>
+    <h3>1. Automatyczna kategoryzacja transakcji</h3>
+    <p>AI analizuje historię transakcji bankowych i automatycznie przypisuje je do odpowiednich kategorii kosztów. Dokładność po pierwszym miesiącu sięga <strong>94%</strong>. Zamiast ręcznie kategoryzować setki transakcji, księgowy jedynie weryfikuje wyjątki.</p>
+    <h3>2. Analiza umów i dokumentów</h3>
+    <p>To obszar, w którym AI robi największą różnicę. Analiza 20-stronicowej umowy najmu zajmuje AI <strong>3 sekundy</strong> — człowiekowi 45 minut. AI identyfikuje kluczowe klauzule, terminy płatności, kary umowne i czerwone flagi prawne.</p>
+    <div class="callout">💡 Velqora AI analizuje faktury, umowy i akty notarialne w formacie PDF — wystarczy przeciągnąć plik.</div>
+    <h3>3. Wykrywanie błędów i anomalii</h3>
+    <p>AI porównuje faktury z historycznymi danymi i wykrywa anomalie: duplikaty, nieprawidłowe stawki VAT, brakujące pozycje obowiązkowe czy faktury od nieistniejących kontrahentów.</p>
+    <h3>4. Generowanie raportów i prognoz</h3>
+    <p>Automatyczne generowanie raportów miesięcznych, kwartalnych i rocznych. AI może prognozować Cash Flow na podstawie historii i terminów płatności, ostrzegając o potencjalnych problemach z płynnością.</p>
+    <h2>Czego AI jeszcze nie potrafi?</h2>
+    <ul>
+      <li>Podejmować decyzji strategicznych (to zadanie dla doradcy podatkowego)</li>
+      <li>Reprezentować klienta przed urzędem skarbowym</li>
+      <li>Zagwarantować 100% poprawności interpretacji przepisów podatkowych</li>
+      <li>Rozumieć kontekstu biznesowego bez dodatkowych informacji</li>
+    </ul>
+    <h2>Jak wdrożyć AI w biurze rachunkowym?</h2>
+    <ol>
+      <li>Zacznij od jednej funkcji — np. analiza dokumentów PDF</li>
+      <li>Testuj przez miesiąc z prawdziwymi danymi i weryfikuj wyniki</li>
+      <li>Stopniowo rozszerzaj zakres automatyzacji</li>
+      <li>Szkolenie zespołu — AI to narzędzie, nie zagrożenie</li>
+    </ol>
+    <div class="art-cta">
+      <div><h3>Przetestuj AI w praktyce</h3><p>Wgraj dowolny dokument PDF i sprawdź analizę Velqora AI. Za darmo.</p></div>
+      <a href="login.html" class="btn-cta">Zacznij teraz →</a>
+    </div>
+    <div class="share-row"><p>Udostępnij:</p><button class="share-btn" onclick="navigator.clipboard.writeText(window.location.href);alert('Skopiowano!')">🔗 Link</button></div>
+  </div>
+</div>
+
+<div class="article-wrap" id="art-jpk-vat">
+  <button class="back-btn" onclick="closeArticle()">← Wróć do bloga</button>
+  <div class="art-cat">Poradnik · JPK</div>
+  <h1 class="art-title">JPK_VAT 2026 — Jak wysłać bez błędów krok po kroku</h1>
+  <div class="art-meta">
+    <div class="art-av">MN</div>
+    <div><div class="art-author">Marcin Nowak</div><div class="art-info">Doradca podatkowy · 5 maja 2026 · 6 min czytania</div></div>
+  </div>
+  <div class="art-cover">📊<div class="cover-gradient" style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(45,212,191,.15),rgba(79,127,255,.1))"></div></div>
+  <div class="art-body">
+    <p>JPK_VAT to comiesięczny obowiązek każdego czynnego podatnika VAT. Termin upływa <strong>25. dnia miesiąca</strong> następującego po miesiącu rozliczeniowym. Oto jak wysłać go bezbłędnie.</p>
+    <h2>Struktura JPK_VAT7M</h2>
+    <p>Plik JPK_VAT składa się z dwóch części:</p>
+    <ul>
+      <li><strong>Część ewidencyjna</strong> — lista wszystkich faktur sprzedaży i zakupu</li>
+      <li><strong>Część deklaracyjna</strong> — zastąpiła dawną deklarację VAT-7</li>
+    </ul>
+    <h2>Najczęstsze błędy</h2>
+    <ul>
+      <li>Brak numeru NIP nabywcy lub sprzedawcy</li>
+      <li>Błędna data sprzedaży vs. data wystawienia faktury</li>
+      <li>Nieprawidłowe oznaczenia GTU (grupy towarów i usług)</li>
+      <li>Brak oznaczenia TP przy transakcjach z podmiotami powiązanymi</li>
+      <li>Niespójność między ewidencją a deklaracją</li>
+    </ul>
+    <h2>Jak wygenerować JPK w Velqora?</h2>
+    <ol>
+      <li>Wejdź do panelu → KSeF / JPK</li>
+      <li>Wybierz miesiąc rozliczeniowy</li>
+      <li>Kliknij „Generuj JPK_VAT" — system sprawdzi poprawność danych</li>
+      <li>Podejrzyj plik i zatwierdź</li>
+      <li>Kliknij „Wyślij do US" — Velqora przesyła bezpośrednio do bramki MF</li>
+      <li>Pobierz UPO (Urzędowe Poświadczenie Odbioru) jako dowód wysyłki</li>
+    </ol>
+    <div class="callout">⏰ Ustaw automatyczne przypomnienie w Velqora → Ustawienia → Powiadomienia → Terminy JPK. Otrzymasz alert 7 dni przed terminem.</div>
+    <div class="art-cta">
+      <div><h3>Automatyczny JPK z Velqora</h3><p>Generuj i wysyłaj JPK_VAT jednym kliknięciem. Bez błędów.</p></div>
+      <a href="login.html" class="btn-cta">Wypróbuj za darmo →</a>
+    </div>
+    <div class="share-row"><p>Udostępnij:</p><button class="share-btn" onclick="navigator.clipboard.writeText(window.location.href);alert('Skopiowano!')">🔗 Link</button></div>
+  </div>
+</div>
+
+<footer>
+  <a class="logo" href="index.html" style="text-decoration:none"><div class="lm">V</div><span class="ln">Velqora</span></a>
+  <div class="ft">© 2026 Velqora · <a href="prawne.html">Polityka prywatności</a> · <a href="index.html#kontakt">Kontakt</a></div>
+</footer>
+
+<script>
+function openArticle(id) {
+  document.getElementById('blog-list').classList.add('hide');
+  document.querySelectorAll('.article-wrap').forEach(a => a.classList.remove('show'));
+  document.getElementById('art-' + id).classList.add('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function closeArticle() {
+  document.getElementById('blog-list').classList.remove('hide');
+  document.querySelectorAll('.article-wrap').forEach(a => a.classList.remove('show'));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function filterCat(btn, cat) {
+  document.querySelectorAll('.cat').forEach(c => c.classList.remove('on'));
+  btn.classList.add('on');
+}
+</script>
+</body>
+</html>

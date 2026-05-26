@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Velqora — Błąd serwera</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#05060a;--a:#4f7fff;--a2:#7b5fff;--teal:#2dd4bf;--tx:#eef0f6;--mu:#5a6080;--br:rgba(79,127,255,.14);--red:#ef4444}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.blob{position:fixed;border-radius:50%;filter:blur(130px);pointer-events:none}
+.b1{width:600px;height:500px;background:rgba(239,68,68,.05);top:-200px;left:-150px}
+.b2{width:400px;height:400px;background:rgba(79,127,255,.05);bottom:-100px;right:-100px}
+.wrap{text-align:center;padding:24px;position:relative;z-index:5;max-width:560px}
+.code{font-family:'Syne',sans-serif;font-size:clamp(100px,20vw,160px);font-weight:800;line-height:1;background:linear-gradient(135deg,#ef4444,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;animation:float 4s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.icon{font-size:64px;margin-bottom:20px;animation:float 4s ease-in-out infinite .5s;display:block}
+h1{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--tx);margin-bottom:12px}
+p{font-size:15px;color:var(--mu);line-height:1.7;margin-bottom:32px;max-width:420px;margin-left:auto;margin-right:auto}
+.btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-p{background:linear-gradient(135deg,var(--a),var(--a2));color:#fff;padding:13px 28px;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;transition:all .2s}
+.btn-p:hover{opacity:.9;transform:translateY(-2px)}
+.btn-g{border:1px solid var(--br);color:var(--mu);padding:13px 28px;border-radius:10px;font-size:14px;text-decoration:none;transition:all .2s}
+.btn-g:hover{border-color:rgba(79,127,255,.4);color:var(--tx)}
+.status-box{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:16px 20px;margin:24px 0;font-size:13px;color:rgba(239,68,68,.8);font-family:monospace}
+.logo{display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:40px;text-decoration:none}
+.lm{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,var(--a),var(--a2));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:#fff}
+.ln{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;color:var(--tx)}
+</style>
+</head>
+<body>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+<div class="wrap">
+  <a class="logo" href="index.html"><div class="lm">V</div><span class="ln">Velqora</span></a>
+  <span class="icon">⚙️</span>
+  <div class="code">500</div>
+  <h1>Błąd serwera</h1>
+  <p>Coś poszło nie tak po naszej stronie. Nasz zespół techniczny został automatycznie powiadomiony i pracuje nad rozwiązaniem.</p>
+  <div class="status-box">Error 500 · Internal Server Error · <span id="ts"></span></div>
+  <div class="btns">
+    <a href="javascript:location.reload()" class="btn-p">🔄 Odśwież stronę</a>
+    <a href="index.html" class="btn-g">← Strona główna</a>
+  </div>
+  <p style="margin-top:24px;font-size:13px">Problem nie ustępuje? <a href="mailto:wsparcie@velqora.pl" style="color:var(--a);text-decoration:none">wsparcie@velqora.pl</a></p>
+</div>
+<script>document.getElementById('ts').textContent=new Date().toLocaleString('pl-PL')</script>
+</body>
+</html>

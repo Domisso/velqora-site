@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Velqora — Regulamin i Polityka Prywatności</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#05060a;--bg2:#080a10;--bg3:#0d1018;--a:#4f7fff;--a2:#7b5fff;--teal:#2dd4bf;--tx:#eef0f6;--mu:#5a6080;--br:rgba(79,127,255,.14)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;display:flex;min-height:100vh}
+.sidebar{width:260px;min-width:260px;background:var(--bg2);border-right:1px solid var(--br);padding:28px 0;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sb-logo{display:flex;align-items:center;gap:10px;padding:0 20px 24px;border-bottom:1px solid var(--br);text-decoration:none;margin-bottom:16px}
+.lm{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,var(--a),var(--a2));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:#fff}
+.ln{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;color:var(--tx)}
+.sb-sec{font-size:9px;color:var(--mu);letter-spacing:.12em;text-transform:uppercase;padding:10px 20px 6px;font-weight:600}
+.sb-link{display:block;padding:8px 20px;font-size:13px;color:var(--mu);text-decoration:none;border-left:2px solid transparent;transition:all .2s}
+.sb-link:hover{color:var(--tx);background:rgba(255,255,255,.02)}
+.sb-link.on{color:var(--a);border-left-color:var(--a);background:rgba(79,127,255,.06)}
+.content{flex:1;max-width:760px;padding:48px 56px 80px}
+.content::-webkit-scrollbar{width:4px}
+.doc-title{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;color:var(--tx);margin-bottom:8px;letter-spacing:-.01em}
+.doc-date{font-size:13px;color:var(--mu);margin-bottom:40px}
+.doc{display:none}
+.doc.show{display:block}
+h2{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--tx);margin:36px 0 12px;padding-top:36px;border-top:1px solid var(--br)}
+h2:first-of-type{border-top:none;padding-top:0;margin-top:0}
+h3{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:rgba(238,240,246,.8);margin:20px 0 8px}
+p{font-size:14px;color:var(--mu);line-height:1.85;margin-bottom:12px}
+ul,ol{padding-left:22px;margin-bottom:12px}
+li{font-size:14px;color:var(--mu);line-height:1.85;margin-bottom:4px}
+strong{color:rgba(238,240,246,.85)}
+.highlight{background:rgba(79,127,255,.07);border:1px solid rgba(79,127,255,.18);border-radius:10px;padding:14px 18px;margin:16px 0}
+.highlight p{margin:0;color:rgba(79,127,255,.9);font-size:13px}
+.contact-box{background:var(--bg3);border:1px solid var(--br);border-radius:12px;padding:20px 24px;margin:24px 0}
+.contact-box p{margin:0;font-size:13px}
+a{color:var(--a);text-decoration:none}
+a:hover{opacity:.75}
+@media(max-width:768px){body{flex-direction:column}.sidebar{width:100%;height:auto;position:relative}.content{padding:28px 20px}}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <a class="sb-logo" href="index.html"><div class="lm">V</div><span class="ln">Velqora</span></a>
+  <div class="sb-sec">Dokumenty prawne</div>
+  <a class="sb-link on" href="#" onclick="showDoc('regulamin',this)">📋 Regulamin usługi</a>
+  <a class="sb-link" href="#" onclick="showDoc('prywatnosc',this)">🔒 Polityka prywatności</a>
+  <a class="sb-link" href="#" onclick="showDoc('rodo',this)">🇪🇺 RODO / GDPR</a>
+  <a class="sb-link" href="#" onclick="showDoc('cookies',this)">🍪 Polityka cookies</a>
+  <div class="sb-sec">Kontakt</div>
+  <a class="sb-link" href="index.html">← Strona główna</a>
+  <a class="sb-link" href="index.html#kontakt">Kontakt</a>
+</nav>
+
+<div class="content">
+
+  <!-- REGULAMIN -->
+  <div class="doc show" id="doc-regulamin">
+    <div class="doc-title">Regulamin usługi Velqora</div>
+    <div class="doc-date">Obowiązuje od: 1 stycznia 2026 · Wersja: 1.0</div>
+    <div class="highlight"><p>📋 Prosimy o uważne zapoznanie się z niniejszym Regulaminem przed rozpoczęciem korzystania z platformy Velqora.</p></div>
+    <h2>§1. Definicje</h2>
+    <p><strong>Velqora</strong> — platforma SaaS świadczona przez Velqora Sp. z o.o. z siedzibą w Warszawie, ul. Złota 59a, 00-120 Warszawa, NIP: [numer], KRS: [numer].</p>
+    <p><strong>Użytkownik</strong> — osoba fizyczna lub prawna korzystająca z Platformy na podstawie zawartej umowy.</p>
+    <p><strong>Plan</strong> — wybrany przez Użytkownika pakiet funkcji (Starter, Pro, Business) dostępny w ramach subskrypcji.</p>
+    <p><strong>Dane</strong> — wszelkie informacje wprowadzane przez Użytkownika do Platformy, w tym dokumenty, faktury i dane finansowe.</p>
+    <h2>§2. Zakres usługi</h2>
+    <p>Velqora świadczy usługi obejmujące:</p>
+    <ul>
+      <li>Wystawianie, zarządzanie i archiwizację faktur VAT</li>
+      <li>Analizę dokumentów przy pomocy sztucznej inteligencji (AI)</li>
+      <li>Integrację z Krajowym Systemem e-Faktur (KSeF)</li>
+      <li>Generowanie plików JPK i e-Deklaracji</li>
+      <li>Synchronizację z rachunkami bankowymi</li>
+      <li>Generowanie raportów finansowych</li>
+    </ul>
+    <h2>§3. Rejestracja i konto</h2>
+    <p>3.1. Rejestracja wymaga podania aktualnego adresu e-mail i ustawienia hasła.</p>
+    <p>3.2. Użytkownik zobowiązuje się do podania prawdziwych danych.</p>
+    <p>3.3. Jedno konto może być powiązane z jedną firmą. Dla obsługi wielu firm wymagany jest plan Business.</p>
+    <p>3.4. Użytkownik odpowiada za bezpieczeństwo swojego hasła i wszelkie działania wykonane z jego konta.</p>
+    <h2>§4. Subskrypcja i płatności</h2>
+    <p>4.1. Usługa rozliczana jest w cyklu miesięcznym lub rocznym, z góry.</p>
+    <p>4.2. Płatności obsługiwane są przez Stripe. Velqora nie przechowuje danych kart płatniczych.</p>
+    <p>4.3. Brak płatności w terminie skutkuje ograniczeniem dostępu do funkcji premium po 7 dniach od daty wymagalności.</p>
+    <p>4.4. Ceny podane są w PLN i zawierają podatek VAT 23%.</p>
+    <p>4.5. Użytkownik może anulować subskrypcję w dowolnym momencie. Dostęp pozostaje do końca opłaconego okresu.</p>
+    <h2>§5. Limity planów</h2>
+    <ul>
+      <li><strong>Starter:</strong> 50 faktur/mies., 10 analiz AI, historia 30 dni</li>
+      <li><strong>Pro:</strong> nielimitowane faktury, 50 analiz AI/mies., historia 1 rok</li>
+      <li><strong>Business:</strong> nielimitowane faktury, nielimitowane analizy AI, pełna historia</li>
+    </ul>
+    <h2>§6. Odpowiedzialność</h2>
+    <p>6.1. Velqora nie ponosi odpowiedzialności za decyzje biznesowe podjęte na podstawie analiz AI. Analizy mają charakter pomocniczy i nie zastępują porad prawnych ani księgowych.</p>
+    <p>6.2. Velqora dokłada wszelkich starań, aby zapewnić ciągłość działania (SLA 99,9% dla planu Business), ale nie gwarantuje nieprzerwanego dostępu do usługi.</p>
+    <p>6.3. Użytkownik jest wyłącznie odpowiedzialny za prawidłowość danych wprowadzanych do systemu, w tym danych fakturowych.</p>
+    <h2>§7. Własność danych</h2>
+    <p>7.1. Wszystkie dane wprowadzone przez Użytkownika pozostają jego własnością.</p>
+    <p>7.2. Velqora nie sprzedaje, nie udostępnia ani nie wykorzystuje danych Użytkowników do celów marketingowych.</p>
+    <p>7.3. Użytkownik może pobrać wszystkie swoje dane w formacie CSV/JSON w dowolnym momencie.</p>
+    <p>7.4. Po rozwiązaniu umowy dane przechowywane są przez 90 dni, po czym są trwale usuwane.</p>
+    <h2>§8. Zmiany Regulaminu</h2>
+    <p>O zmianach Regulaminu Użytkownicy informowani są e-mailem z 30-dniowym wyprzedzeniem. Korzystanie z Platformy po tym terminie oznacza akceptację zmian.</p>
+    <div class="contact-box"><p><strong>Kontakt:</strong> kontakt@velqora.pl · +48 22 123 45 67<br/>Velqora Sp. z o.o. · ul. Złota 59a · 00-120 Warszawa</p></div>
+  </div>
+
+  <!-- POLITYKA PRYWATNOŚCI -->
+  <div class="doc" id="doc-prywatnosc">
+    <div class="doc-title">Polityka Prywatności</div>
+    <div class="doc-date">Obowiązuje od: 1 stycznia 2026 · Zgodna z RODO</div>
+    <div class="highlight"><p>🔒 Twoja prywatność jest dla nas priorytetem. Poniżej wyjaśniamy, jakie dane zbieramy i jak je chronimy.</p></div>
+    <h2>1. Administrator danych</h2>
+    <p>Administratorem Twoich danych osobowych jest <strong>Velqora Sp. z o.o.</strong>, ul. Złota 59a, 00-120 Warszawa. Kontakt z Inspektorem Ochrony Danych: <a href="mailto:rodo@velqora.pl">rodo@velqora.pl</a></p>
+    <h2>2. Jakie dane zbieramy</h2>
+    <h3>Dane rejestracyjne</h3>
+    <ul><li>Imię, nazwisko, adres e-mail</li><li>Dane firmy (nazwa, NIP, adres)</li><li>Adres IP i dane przeglądarki (logi)</li></ul>
+    <h3>Dane finansowe</h3>
+    <ul><li>Faktury i dokumenty księgowe (tylko te które wprowadzasz)</li><li>Historia transakcji i płatności za subskrypcję</li></ul>
+    <h3>Dane techniczne</h3>
+    <ul><li>Logi dostępu, adres IP, typ przeglądarki</li><li>Dane sesji (token autoryzacyjny)</li></ul>
+    <h2>3. Cel i podstawa prawna przetwarzania</h2>
+    <ul>
+      <li><strong>Wykonanie umowy</strong> (art. 6 ust. 1 lit. b RODO) — świadczenie usługi Velqora</li>
+      <li><strong>Obowiązek prawny</strong> (art. 6 ust. 1 lit. c RODO) — wymogi podatkowe i rachunkowe</li>
+      <li><strong>Uzasadniony interes</strong> (art. 6 ust. 1 lit. f RODO) — bezpieczeństwo, zapobieganie nadużyciom</li>
+      <li><strong>Zgoda</strong> (art. 6 ust. 1 lit. a RODO) — marketing, newsletter (możesz wycofać w każdej chwili)</li>
+    </ul>
+    <h2>4. Przechowywanie danych</h2>
+    <p>Dane przechowywane są na serwerach zlokalizowanych w Polsce i Unii Europejskiej. Nie przekazujemy danych poza EOG. Czas przechowywania: przez czas trwania umowy + 90 dni po jej rozwiązaniu (dane użytkownika) lub 5 lat (dane fakturowe — wymóg podatkowy).</p>
+    <h2>5. Twoje prawa</h2>
+    <ul>
+      <li>Prawo dostępu do danych i ich kopii</li>
+      <li>Prawo do sprostowania nieprawidłowych danych</li>
+      <li>Prawo do usunięcia danych („prawo do bycia zapomnianym")</li>
+      <li>Prawo do ograniczenia przetwarzania</li>
+      <li>Prawo do przenoszenia danych (export CSV/JSON)</li>
+      <li>Prawo do sprzeciwu wobec przetwarzania</li>
+      <li>Prawo do skargi do Prezesa UODO (uodo.gov.pl)</li>
+    </ul>
+    <p>Aby skorzystać z praw, napisz na: <a href="mailto:rodo@velqora.pl">rodo@velqora.pl</a></p>
+    <h2>6. Podmioty przetwarzające</h2>
+    <ul>
+      <li><strong>Stripe Inc.</strong> — obsługa płatności (USA, Privacy Shield)</li>
+      <li><strong>Anthropic PBC</strong> — analiza AI dokumentów (USA, SCC)</li>
+      <li><strong>OVHcloud</strong> — hosting (Polska/UE)</li>
+    </ul>
+    <div class="contact-box"><p><strong>IOD:</strong> rodo@velqora.pl · Velqora Sp. z o.o. · ul. Złota 59a · 00-120 Warszawa</p></div>
+  </div>
+
+  <!-- RODO -->
+  <div class="doc" id="doc-rodo">
+    <div class="doc-title">Informacja RODO</div>
+    <div class="doc-date">Rozporządzenie UE 2016/679 (GDPR)</div>
+    <div class="highlight"><p>🇪🇺 Velqora jest w pełni zgodna z Rozporządzeniem Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r.</p></div>
+    <h2>Klauzula informacyjna (art. 13 RODO)</h2>
+    <p><strong>Administrator:</strong> Velqora Sp. z o.o., ul. Złota 59a, 00-120 Warszawa</p>
+    <p><strong>Inspektor Ochrony Danych:</strong> <a href="mailto:rodo@velqora.pl">rodo@velqora.pl</a></p>
+    <p><strong>Cel:</strong> Świadczenie usług platformy księgowej, w tym wystawianie faktur, analiza AI dokumentów i obsługa KSeF.</p>
+    <p><strong>Podstawa prawna:</strong> art. 6 ust. 1 lit. b (umowa), lit. c (obowiązek prawny), lit. f (uzasadniony interes) RODO.</p>
+    <p><strong>Odbiorcy:</strong> Podmioty przetwarzające wskazane w Polityce Prywatności. Dane nie są przekazywane poza EOG bez odpowiednich zabezpieczeń (SCC/BCR).</p>
+    <p><strong>Okres przechowywania:</strong> Czas trwania umowy + 90 dni, dane fakturowe 5 lat (przepisy podatkowe).</p>
+    <h2>Środki techniczne i organizacyjne</h2>
+    <ul>
+      <li>Szyfrowanie danych w transmisji (TLS 1.3) i w spoczynku (AES-256)</li>
+      <li>Serwery w Polsce (OVHcloud, certyfikat ISO 27001)</li>
+      <li>Regularne kopie bezpieczeństwa (RPO: 1h, RTO: 4h)</li>
+      <li>Kontrola dostępu oparta na rolach (RBAC)</li>
+      <li>Audyt logów dostępu</li>
+      <li>Pseudonimizacja danych w środowisku testowym</li>
+    </ul>
+    <h2>Prawa osób, których dane dotyczą</h2>
+    <p>Możesz w każdej chwili: uzyskać dostęp, sprostować, usunąć, przenieść dane lub wnieść sprzeciw. Odpowiadamy w ciągu 30 dni.</p>
+    <p>Skarga: <a href="https://uodo.gov.pl" target="_blank">Prezes UODO</a>, ul. Stawki 2, 00-193 Warszawa</p>
+    <div class="contact-box"><p><strong>Kontakt RODO:</strong> rodo@velqora.pl · Odpowiedź w ciągu 48h roboczych</p></div>
+  </div>
+
+  <!-- COOKIES -->
+  <div class="doc" id="doc-cookies">
+    <div class="doc-title">Polityka Cookies</div>
+    <div class="doc-date">Obowiązuje od: 1 stycznia 2026</div>
+    <h2>Czym są pliki cookie?</h2>
+    <p>Cookies to małe pliki tekstowe zapisywane na Twoim urządzeniu przez przeglądarkę. Velqora używa ich wyłącznie w niezbędnym zakresie do działania aplikacji.</p>
+    <h2>Jakich cookies używamy</h2>
+    <h3>Niezbędne (wymagane)</h3>
+    <ul>
+      <li><strong>velqora_token</strong> — token sesji logowania (localStorage), ważny 30 dni</li>
+      <li><strong>velqora_user</strong> — dane profilu użytkownika (localStorage), cache</li>
+      <li><strong>PHPSESSID</strong> — sesja PHP, wygasa po zamknięciu przeglądarki</li>
+    </ul>
+    <h3>Analityczne (opcjonalne, za zgodą)</h3>
+    <ul>
+      <li>Velqora nie używa Google Analytics ani innych zewnętrznych narzędzi analitycznych</li>
+      <li>Prowadzimy własne logi serwera wyłącznie do celów bezpieczeństwa</li>
+    </ul>
+    <h3>Marketingowe</h3>
+    <p>Velqora <strong>nie używa</strong> cookies marketingowych ani remarketingowych. Nie wyświetlamy reklam.</p>
+    <h2>Zarządzanie cookies</h2>
+    <p>Możesz usunąć cookies w ustawieniach przeglądarki. Usunięcie cookies sesji spowoduje wylogowanie z aplikacji.</p>
+    <p>Dane w localStorage możesz wyczyścić w: Narzędzia deweloperskie → Application → Local Storage → Wyczyść.</p>
+    <div class="contact-box"><p><strong>Pytania:</strong> prywatnosc@velqora.pl</p></div>
+  </div>
+
+</div>
+
+<script>
+function showDoc(id, link) {
+  document.querySelectorAll('.doc').forEach(d => d.classList.remove('show'));
+  document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('on'));
+  document.getElementById('doc-' + id).classList.add('show');
+  link.classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+  return false;
+}
+</script>
+</body>
+</html>

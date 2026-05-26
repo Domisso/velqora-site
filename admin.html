@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Velqora — Panel Właściciela</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#05060a;--bg2:#080a10;--bg3:#0d1018;--a:#4f7fff;--a2:#7b5fff;--teal:#2dd4bf;--tx:#eef0f6;--mu:#5a6080;--br:rgba(79,127,255,.14);--green:#22c55e;--red:#ef4444;--yellow:#eab308;--sb:240px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;display:flex;height:100vh;overflow:hidden}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+
+/* SIDEBAR */
+.sb{width:var(--sb);min-width:var(--sb);background:rgba(8,10,16,.98);border-right:1px solid var(--br);display:flex;flex-direction:column;height:100vh}
+.sb-logo{display:flex;align-items:center;gap:10px;padding:20px 16px;border-bottom:1px solid var(--br)}
+.lm{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#ef4444,#dc2626);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:#fff}
+.sb-title{font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:var(--tx)}
+.sb-role{font-size:10px;color:#ef4444;letter-spacing:.08em;text-transform:uppercase}
+.sb-nav{flex:1;padding:10px 8px;overflow-y:auto}
+.sb-sec{font-size:9px;color:var(--mu);letter-spacing:.14em;text-transform:uppercase;padding:12px 8px 6px;font-weight:600}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;cursor:pointer;margin-bottom:2px;transition:all .2s;font-size:13px;color:var(--mu)}
+.ni:hover{background:rgba(255,255,255,.04);color:var(--tx)}
+.ni.act{background:rgba(239,68,68,.1);color:#ef4444}
+.ni .ico{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+.sb-user{display:flex;align-items:center;gap:10px;padding:14px 16px;border-top:1px solid var(--br)}
+.uav{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#ef4444,#dc2626);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.logout{width:26px;height:26px;border:none;background:none;color:var(--mu);cursor:pointer;border-radius:6px;font-size:14px;transition:all .2s;margin-left:auto}
+.logout:hover{background:rgba(239,68,68,.1);color:#ef4444}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:60px;border-bottom:1px solid var(--br);display:flex;align-items:center;padding:0 28px;gap:14px;background:rgba(5,6,10,.8);backdrop-filter:blur(20px);flex-shrink:0}
+.page-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--tx)}
+.tb-r{display:flex;align-items:center;gap:10px;margin-left:auto}
+.tb-btn{padding:7px 16px;border:1px solid var(--br);border-radius:8px;background:none;color:var(--mu);font-size:12px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.tb-btn:hover{border-color:rgba(79,127,255,.3);color:var(--tx)}
+.tb-btn.red{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.2);color:#ef4444}
+.content{flex:1;overflow-y:auto;padding:28px}
+
+/* PANELS */
+.panel{display:none;animation:pIn .25s ease}
+.panel.show{display:block}
+@keyframes pIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARDS */
+.card{background:var(--bg3);border:1px solid var(--br);border-radius:12px;padding:20px}
+.card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-t{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--tx)}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+.kpi{background:var(--bg3);border:1px solid var(--br);border-radius:12px;padding:16px;position:relative;overflow:hidden;transition:all .25s}
+.kpi:hover{border-color:rgba(79,127,255,.25);transform:translateY(-2px)}
+.kpi::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--kl,linear-gradient(90deg,var(--a),var(--a2)))}
+.kpi-ico{position:absolute;top:14px;right:14px;font-size:18px;opacity:.3}
+.kpi-lbl{font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.kpi-val{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--tx);margin-bottom:4px}
+.kpi-ch{font-size:11px}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:.07em;padding:8px 12px;text-align:left;border-bottom:1px solid var(--br)}
+.tbl td{padding:10px 12px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.04)}
+.tbl tr:hover td{background:rgba(255,255,255,.02)}
+.tbl tr:last-child td{border-bottom:none}
+
+/* STATUS */
+.pill-g{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:var(--green);font-size:10px;padding:2px 10px;border-radius:20px;display:inline-block}
+.pill-y{background:rgba(234,179,8,.1);border:1px solid rgba(234,179,8,.2);color:var(--yellow);font-size:10px;padding:2px 10px;border-radius:20px;display:inline-block}
+.pill-r{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--red);font-size:10px;padding:2px 10px;border-radius:20px;display:inline-block}
+.pill-b{background:rgba(79,127,255,.1);border:1px solid rgba(79,127,255,.2);color:var(--a);font-size:10px;padding:2px 10px;border-radius:20px;display:inline-block}
+
+/* CHART */
+.chart-bars{display:flex;align-items:flex-end;gap:4px;height:100px}
+.cbar{flex:1;border-radius:3px 3px 0 0;transition:all .3s;min-width:0}
+.cbar:hover{filter:brightness(1.2);cursor:pointer}
+.cbar.rev{background:linear-gradient(0deg,var(--a),var(--a2))}
+.cbar.usr{background:linear-gradient(0deg,var(--teal),rgba(45,212,191,.4))}
+.chart-lbl{display:flex;gap:4px;margin-top:6px}
+.chart-lbl span{flex:1;text-align:center;font-size:10px;color:var(--mu)}
+
+/* FORMS */
+.fg{margin-bottom:12px}
+.fg label{display:block;font-size:10px;color:rgba(79,127,255,.8);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;font-weight:600}
+.fg input,.fg select,.fg textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--br);border-radius:8px;padding:9px 13px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border-color .2s}
+.fg input:focus,.fg select:focus{border-color:rgba(79,127,255,.5)}
+.fg select{appearance:none}
+.fg select option{background:var(--bg3)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g2{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-bottom:16px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}
+
+/* BUTTONS */
+.btn-p{background:linear-gradient(135deg,var(--a),var(--a2));color:#fff;border:none;padding:9px 20px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-p:hover{opacity:.9;transform:translateY(-1px)}
+.btn-r{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;padding:7px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:all .2s}
+.btn-r:hover{background:rgba(239,68,68,.2)}
+.btn-g{border:1px solid var(--br);color:var(--mu);padding:7px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;background:none;transition:all .2s}
+.btn-g:hover{border-color:rgba(79,127,255,.3);color:var(--tx)}
+.pbar{height:4px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden}
+.pbar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--a),var(--teal));transition:width .5s}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--bg3);border:1px solid rgba(79,127,255,.35);border-radius:12px;padding:12px 18px;font-size:13px;color:var(--tx);box-shadow:0 8px 32px rgba(0,0,0,.5);transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none;max-width:280px}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* CODE */
+.code-block{background:rgba(0,0,0,.4);border:1px solid var(--br);border-radius:9px;padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#a8d8a8;line-height:1.8;overflow-x:auto}
+
+/* ALERT */
+.alert{border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:16px;line-height:1.6}
+.alert-r{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);color:rgba(239,68,68,.9)}
+.alert-b{background:rgba(79,127,255,.07);border:1px solid rgba(79,127,255,.2);color:rgba(79,127,255,.9)}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+
+<!-- SIDEBAR -->
+<nav class="sb">
+  <div class="sb-logo">
+    <div class="lm">⚙</div>
+    <div>
+      <div class="sb-title">Velqora Admin</div>
+      <div class="sb-role">Panel Właściciela</div>
+    </div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-sec">Główne</div>
+    <div class="ni act" onclick="nav('dashboard')"><span class="ico">📊</span>Dashboard</div>
+    <div class="ni" onclick="nav('users')"><span class="ico">👥</span>Użytkownicy</div>
+    <div class="ni" onclick="nav('revenue')"><span class="ico">💰</span>Przychody</div>
+    <div class="ni" onclick="nav('subscriptions')"><span class="ico">💳</span>Subskrypcje</div>
+    <div class="sb-sec">System</div>
+    <div class="ni" onclick="nav('logs')"><span class="ico">📋</span>Logi systemowe</div>
+    <div class="ni" onclick="nav('emails')"><span class="ico">📧</span>Kampanie e-mail</div>
+    <div class="ni" onclick="nav('releases')"><span class="ico">🚀</span>Wersje / Release</div>
+    <div class="sb-sec">Konfiguracja</div>
+    <div class="ni" onclick="nav('settings')"><span class="ico">⚙️</span>Ustawienia</div>
+    <div class="ni" onclick="nav('api')"><span class="ico">🔗</span>Klucze API</div>
+  </div>
+  <div class="sb-user">
+    <div class="uav">AD</div>
+    <div style="flex:1;min-width:0"><div style="font-size:12px;color:var(--tx)">Administrator</div><div style="font-size:10px;color:var(--mu)">admin@velqora.pl</div></div>
+    <button class="logout" onclick="window.location.href='login.html'" title="Wyloguj">↩</button>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="page-title" id="page-title">Dashboard</div>
+    <div class="tb-r">
+      <div style="font-size:12px;color:var(--mu)" id="admin-time"></div>
+      <button class="tb-btn" onclick="refreshData()">🔄 Odśwież</button>
+      <button class="tb-btn red" onclick="toast('⚠️ Tryb konserwacji włączony')">🔧 Konserwacja</button>
+      <a href="index.html" target="_blank" class="tb-btn">🌐 Strona</a>
+    </div>
+  </div>
+  <div class="content" id="content">
+
+    <!-- ════ DASHBOARD ════ -->
+    <div class="panel show" id="panel-dashboard">
+      <div class="kpi-grid">
+        <div class="kpi" style="--kl:linear-gradient(90deg,var(--green),var(--teal))"><div class="kpi-ico">💰</div><div class="kpi-lbl">MRR</div><div class="kpi-val" id="k-mrr">0</div><div class="kpi-ch" style="color:var(--green)">▲ +18% m/m</div></div>
+        <div class="kpi" style="--kl:linear-gradient(90deg,var(--a),var(--a2))"><div class="kpi-ico">👥</div><div class="kpi-lbl">Aktywni użytkownicy</div><div class="kpi-val" id="k-users">0</div><div class="kpi-ch" style="color:var(--green)">▲ +24 dziś</div></div>
+        <div class="kpi" style="--kl:linear-gradient(90deg,var(--a2),#9333ea)"><div class="kpi-ico">📄</div><div class="kpi-lbl">Faktury (ten mies.)</div><div class="kpi-val" id="k-inv">0</div><div class="kpi-ch" style="color:var(--mu)">łącznie w systemie</div></div>
+        <div class="kpi" style="--kl:linear-gradient(90deg,var(--teal),var(--a))"><div class="kpi-ico">🤖</div><div class="kpi-lbl">Analizy AI</div><div class="kpi-val" id="k-ai">0</div><div class="kpi-ch" style="color:var(--mu)">ten miesiąc</div></div>
+        <div class="kpi" style="--kl:linear-gradient(90deg,var(--red),#f97316)"><div class="kpi-ico">⚠️</div><div class="kpi-lbl">Churn (mies.)</div><div class="kpi-val" id="k-churn">0%</div><div class="kpi-ch" style="color:var(--green)">▼ -0.5pp</div></div>
+      </div>
+
+      <div class="g2">
+        <div class="card">
+          <div class="card-h"><div class="card-t">Przychody MRR (12 mies.)</div>
+            <div style="display:flex;gap:10px">
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mu)"><div style="width:8px;height:8px;background:var(--a);border-radius:2px"></div>MRR</div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mu)"><div style="width:8px;height:8px;background:var(--teal);border-radius:2px"></div>Użytkownicy</div>
+            </div>
+          </div>
+          <div class="chart-bars" id="rev-chart">
+            <div class="cbar rev" style="height:28%" title="Cze'25: 4 200 zł"></div>
+            <div class="cbar rev" style="height:35%" title="Lip'25: 5 800 zł"></div>
+            <div class="cbar rev" style="height:42%" title="Sie'25: 7 100 zł"></div>
+            <div class="cbar rev" style="height:50%" title="Wrz'25: 8 900 zł"></div>
+            <div class="cbar rev" style="height:58%" title="Paź'25: 10 200 zł"></div>
+            <div class="cbar rev" style="height:65%" title="Lis'25: 11 800 zł"></div>
+            <div class="cbar rev" style="height:70%" title="Gru'25: 13 500 zł"></div>
+            <div class="cbar rev" style="height:75%" title="Sty'26: 15 200 zł"></div>
+            <div class="cbar rev" style="height:80%" title="Lut'26: 17 100 zł"></div>
+            <div class="cbar rev" style="height:85%" title="Mar'26: 19 400 zł"></div>
+            <div class="cbar rev" style="height:92%" title="Kwi'26: 22 100 zł"></div>
+            <div class="cbar" style="height:100%;background:linear-gradient(0deg,var(--teal),var(--a))" title="Maj'26: 24 800 zł"></div>
+          </div>
+          <div class="chart-lbl"><span>Cze</span><span>Lip</span><span>Sie</span><span>Wrz</span><span>Paź</span><span>Lis</span><span>Gru</span><span>Sty</span><span>Lut</span><span>Mar</span><span>Kwi</span><span style="color:var(--a)">Maj</span></div>
+        </div>
+        <div class="card">
+          <div class="card-h"><div class="card-t">Rozkład planów</div></div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--tx)">Starter</span><span style="font-size:12px;color:var(--mu)">312 (38%)</span></div>
+              <div class="pbar"><div class="pbar-fill" style="width:38%;background:rgba(79,127,255,.5)"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--tx)">Pro</span><span style="font-size:12px;color:var(--mu)">389 (47%)</span></div>
+              <div class="pbar"><div class="pbar-fill" style="width:47%"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--tx)">Business</span><span style="font-size:12px;color:var(--mu)">123 (15%)</span></div>
+              <div class="pbar"><div class="pbar-fill" style="width:15%;background:linear-gradient(90deg,#8b5cf6,#6d28d9)"></div></div>
+            </div>
+            <div style="margin-top:8px;padding-top:12px;border-top:1px solid var(--br)">
+              <div style="font-size:11px;color:var(--mu);margin-bottom:6px">ARR (roczny przychód)</div>
+              <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--teal)">297 600 zł</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="g3">
+        <div class="card">
+          <div class="card-h"><div class="card-t">Status systemu</div></div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--mu)">API</span><span class="pill-g">✓ Online</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--mu)">Baza danych</span><span class="pill-g">✓ Online</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--mu)">Stripe</span><span class="pill-g">✓ Online</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--mu)">KSeF MF</span><span class="pill-g">✓ Online</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--mu)">Anthropic AI</span><span class="pill-g">✓ Online</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--mu)">E-mail (SMTP)</span><span class="pill-g">✓ Online</span></div>
+            <div style="margin-top:8px;padding-top:10px;border-top:1px solid var(--br);font-size:11px;color:var(--mu)">Uptime (30 dni): <strong style="color:var(--green)">99.97%</strong></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-h"><div class="card-t">Nowi użytkownicy (7 dni)</div></div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)"><span style="color:var(--mu)">Dziś</span><span style="color:var(--tx);font-weight:600">+24</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)"><span style="color:var(--mu)">Wczoraj</span><span style="color:var(--tx)">+18</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)"><span style="color:var(--mu)">Wt</span><span style="color:var(--tx)">+21</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)"><span style="color:var(--mu)">Pn</span><span style="color:var(--tx)">+29</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 0"><span style="color:var(--mu)">7 dni razem</span><span style="color:var(--teal);font-weight:700">+141</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-h"><div class="card-t">Ostatnie płatności</div></div>
+          <div style="display:flex;flex-direction:column;gap:6px;font-size:12px">
+            <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)"><span style="color:var(--mu)">jan@firma.pl</span><span style="color:var(--green)">+199 zł</span></div>
+            <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)"><span style="color:var(--mu)">anna@biuro.pl</span><span style="color:var(--green)">+499 zł</span></div>
+            <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)"><span style="color:var(--mu)">piotr@sp.pl</span><span style="color:var(--green)">+79 zł</span></div>
+            <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)"><span style="color:var(--mu)">marek@ltd.pl</span><span style="color:var(--red)">Nieudana</span></div>
+            <div style="display:flex;justify-content:space-between;padding:5px 0"><span style="color:var(--mu)">kasia@s.c.pl</span><span style="color:var(--green)">+199 zł</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ UŻYTKOWNICY ════ -->
+    <div class="panel" id="panel-users">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--tx)">Użytkownicy</div>
+          <div style="font-size:12px;color:var(--mu);margin-top:2px">824 kont · 789 aktywnych · 35 nieaktywnych</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <input type="search" placeholder="Szukaj..." style="background:rgba(255,255,255,.04);border:1px solid var(--br);border-radius:8px;padding:8px 14px;color:var(--tx);font-size:13px;outline:none;width:220px" oninput="filterUsers(this.value)"/>
+          <button class="btn-p" onclick="toast('Eksport CSV...')">⬇ Export CSV</button>
+        </div>
+      </div>
+      <div class="card">
+        <table class="tbl" id="users-table">
+          <tr><th>ID</th><th>Użytkownik</th><th>E-mail</th><th>Plan</th><th>Rejestracja</th><th>Ostatnie logowanie</th><th>Status</th><th>Akcje</th></tr>
+          <tr><td style="color:var(--mu);font-family:'JetBrains Mono',monospace;font-size:11px">#0001</td><td><div style="display:flex;align-items:center;gap:8px"><div style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--a2));display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff">AK</div>Anna Kowalska</div></td><td style="color:var(--mu)">anna@kancelaria.pl</td><td><span class="pill-b">Pro</span></td><td style="color:var(--mu)">15.01.2026</td><td style="color:var(--mu)">dziś, 09:14</td><td><span class="pill-g">Aktywny</span></td><td style="display:flex;gap:5px"><button class="btn-g" onclick="toast('Edycja: Anna Kowalska')">✏</button><button class="btn-r" onclick="toast('Zablokowano konto')">⛔</button></td></tr>
+          <tr><td style="color:var(--mu);font-family:'JetBrains Mono',monospace;font-size:11px">#0002</td><td><div style="display:flex;align-items:center;gap:8px"><div style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--teal),#0891b2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff">PW</div>Piotr Wierzbicki</div></td><td style="color:var(--mu)">piotr@biuro.pl</td><td><span class="pill-g">Business</span></td><td style="color:var(--mu)">02.03.2026</td><td style="color:var(--mu)">wczoraj</td><td><span class="pill-g">Aktywny</span></td><td style="display:flex;gap:5px"><button class="btn-g" onclick="toast('Edycja: Piotr Wierzbicki')">✏</button><button class="btn-r" onclick="toast('Zablokowano')">⛔</button></td></tr>
+          <tr><td style="color:var(--mu);font-family:'JetBrains Mono',monospace;font-size:11px">#0003</td><td><div style="display:flex;align-items:center;gap:8px"><div style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#6d28d9);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff">MN</div>Marcin Nowak</div></td><td style="color:var(--mu)">marcin@nowak.pl</td><td><span class="pill-y">Starter</span></td><td style="color:var(--mu)">10.04.2026</td><td style="color:var(--mu)">3 dni temu</td><td><span class="pill-y">Trial</span></td><td style="display:flex;gap:5px"><button class="btn-g" onclick="toast('Edycja: Marcin Nowak')">✏</button><button class="btn-r" onclick="toast('Zablokowano')">⛔</button></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ════ PRZYCHODY ════ -->
+    <div class="panel" id="panel-revenue">
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--tx);margin-bottom:20px">Przychody i finanse</div>
+      <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+        <div class="kpi" style="--kl:linear-gradient(90deg,var(--green),var(--teal))"><div class="kpi-ico">📈</div><div class="kpi-lbl">MRR (maj)</div><div class="kpi-val">24 800 zł</div><div class="kpi-ch" style="color:var(--green)">▲ +12%</div></div>
+        <div class="kpi" style="--kl:linear-gradient(90deg,var(--a),var(--a2))"><div class="kpi-ico">📊</div><div class="kpi-lbl">ARR</div><div class="kpi-val">297 600 zł</div><div class="kpi-ch" style="color:var(--green)">▲ +152% YoY</div></div>
+        <div class="kpi" style="--kl:linear-gradient(90deg,var(--yellow),#f97316)"><div class="kpi-ico">⚠️</div><div class="kpi-lbl">Nieudane płatności</div><div class="kpi-val">3</div><div class="kpi-ch" style="color:var(--yellow)">● w tym mies.</div></div>
+        <div class="kpi" style="--kl:linear-gradient(90deg,var(--red),#f97316)"><div class="kpi-ico">📉</div><div class="kpi-lbl">Churn MRR</div><div class="kpi-val">1 240 zł</div><div class="kpi-ch" style="color:var(--green)">▼ -0.5%</div></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><div class="card-t">Historia płatności Stripe</div><button class="btn-p" style="padding:6px 14px;font-size:12px" onclick="toast('Otwieranie Stripe Dashboard...')">Otwórz Stripe</button></div>
+        <table class="tbl">
+          <tr><th>Data</th><th>Użytkownik</th><th>Plan</th><th>Kwota</th><th>Metoda</th><th>Status</th><th>Stripe ID</th></tr>
+          <tr><td>18.05.2026</td><td>anna@kancelaria.pl</td><td><span class="pill-b">Pro</span></td><td><b>199 zł</b></td><td>Visa ****4242</td><td><span class="pill-g">Sukces</span></td><td style="font-size:10px;color:var(--mu);font-family:'JetBrains Mono',monospace">pi_3ABC...</td></tr>
+          <tr><td>17.05.2026</td><td>piotr@biuro.pl</td><td><span class="pill-g">Business</span></td><td><b>499 zł</b></td><td>MC ****1234</td><td><span class="pill-g">Sukces</span></td><td style="font-size:10px;color:var(--mu);font-family:'JetBrains Mono',monospace">pi_3DEF...</td></tr>
+          <tr><td>16.05.2026</td><td>marek@firma.pl</td><td><span class="pill-y">Starter</span></td><td><b>79 zł</b></td><td>Visa ****9999</td><td><span class="pill-r">Nieudana</span></td><td style="font-size:10px;color:var(--mu);font-family:'JetBrains Mono',monospace">pi_3GHI...</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ════ LOGI ════ -->
+    <div class="panel" id="panel-logs">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+        <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--tx)">Logi systemowe</div>
+        <div style="display:flex;gap:8px">
+          <select style="background:rgba(255,255,255,.04);border:1px solid var(--br);border-radius:8px;padding:7px 12px;color:var(--mu);font-size:12px;outline:none">
+            <option>Wszystkie</option><option>Error</option><option>Warning</option><option>Info</option>
+          </select>
+          <button class="btn-g" onclick="toast('Czyszczenie logów...')">🗑 Wyczyść</button>
+        </div>
+      </div>
+      <div class="code-block" id="log-output" style="max-height:500px;overflow-y:auto"></div>
+    </div>
+
+    <!-- ════ RELEASE ════ -->
+    <div class="panel" id="panel-releases">
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--tx);margin-bottom:20px">Zarządzanie wersjami</div>
+      <div class="alert alert-b">🚀 Aktualna wersja produkcyjna: <strong>1.0.0</strong> · Electron Desktop · React Native Mobile · PWA</div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-h"><div class="card-t">Wydaj nową wersję</div></div>
+          <div class="row2">
+            <div class="fg"><label>Numer wersji</label><input id="rel-ver" value="1.0.1" placeholder="np. 1.1.0"/></div>
+            <div class="fg"><label>Typ wersji</label>
+              <select id="rel-type"><option>patch (bugfix)</option><option>minor (nowe funkcje)</option><option>major (breaking changes)</option></select>
+            </div>
+          </div>
+          <div class="fg"><label>Opis zmian (changelog)</label><textarea id="rel-notes" rows="4" placeholder="- Naprawiono błąd X&#10;- Dodano funkcję Y&#10;- Poprawiono wydajność Z" style="background:rgba(255,255,255,.04);border:1px solid var(--br);border-radius:8px;padding:10px 14px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;width:100%;resize:none"></textarea></div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">
+            <button class="btn-p" onclick="publishRelease()">🚀 Opublikuj wersję</button>
+            <button class="btn-g" onclick="toast('Generowanie pliku version.json...')">📄 Aktualizuj version.json</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-h"><div class="card-t">Historia wersji</div></div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="padding:10px 12px;background:rgba(79,127,255,.06);border:1px solid rgba(79,127,255,.18);border-radius:9px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--a)">v1.0.0</span><span class="pill-g">Aktualna</span></div>
+              <div style="font-size:11px;color:var(--mu)">01.05.2026 · Pierwsze wydanie publiczne</div>
+            </div>
+            <div style="padding:10px 12px;background:rgba(255,255,255,.02);border:1px solid var(--br);border-radius:9px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--mu)">v0.9.5</span><span class="pill-y">Beta</span></div>
+              <div style="font-size:11px;color:var(--mu)">15.04.2026 · Beta dla wybranych</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ USTAWIENIA ════ -->
+    <div class="panel" id="panel-settings">
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--tx);margin-bottom:20px">Ustawienia systemu</div>
+      <div class="alert alert-r">⚠️ Zmiany ustawień mają natychmiastowy wpływ na działanie całej platformy. Działaj ostrożnie.</div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-h"><div class="card-t">Ogólne</div></div>
+          <div class="fg"><label>Nazwa aplikacji</label><input value="Velqora"/></div>
+          <div class="fg"><label>URL aplikacji</label><input value="https://velqora.pl"/></div>
+          <div class="fg"><label>E-mail supportu</label><input value="wsparcie@velqora.pl"/></div>
+          <div class="fg"><label>E-mail RODO</label><input value="rodo@velqora.pl"/></div>
+          <div class="fg"><label>Tryb środowiska KSeF</label>
+            <select><option>Test (ksef-test.mf.gov.pl)</option><option>Produkcja (ksef.mf.gov.pl)</option></select>
+          </div>
+          <button class="btn-p" style="margin-top:8px" onclick="toast('✅ Ustawienia zapisane!')">Zapisz</button>
+        </div>
+        <div class="card">
+          <div class="card-h"><div class="card-t">Limity planów</div></div>
+          <div class="fg"><label>Starter — AI analiz/mies.</label><input type="number" value="10"/></div>
+          <div class="fg"><label>Pro — AI analiz/mies.</label><input type="number" value="50"/></div>
+          <div class="fg"><label>Business — AI analiz/mies.</label><input type="number" value="9999"/></div>
+          <div class="fg"><label>Starter — Faktury/mies.</label><input type="number" value="50"/></div>
+          <button class="btn-p" style="margin-top:8px" onclick="toast('✅ Limity zaktualizowane!')">Zapisz limity</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ API ════ -->
+    <div class="panel" id="panel-api">
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--tx);margin-bottom:20px">Klucze API</div>
+      <div class="alert alert-r">⚠️ Nigdy nie udostępniaj kluczy API publicznie ani w repozytorium Git.</div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-h"><div class="card-t">Klucze konfiguracyjne</div><button class="btn-g" onclick="toast('Klucze odświeżone')">🔄 Odśwież</button></div>
+        <table class="tbl">
+          <tr><th>Usługa</th><th>Klucz (masked)</th><th>Status</th><th>Akcje</th></tr>
+          <tr><td>Stripe Secret Key</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mu)">sk_live_••••••••••••••4242</td><td><span class="pill-g">Aktywny</span></td><td><button class="btn-g" onclick="toast('Skopiowano')">Kopiuj</button></td></tr>
+          <tr><td>Stripe Webhook Secret</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mu)">whsec_••••••••••••••abcd</td><td><span class="pill-g">Aktywny</span></td><td><button class="btn-g" onclick="toast('Skopiowano')">Kopiuj</button></td></tr>
+          <tr><td>Anthropic API Key</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mu)">sk-ant-••••••••••••••efgh</td><td><span class="pill-g">Aktywny</span></td><td><button class="btn-g" onclick="toast('Skopiowano')">Kopiuj</button></td></tr>
+          <tr><td>JWT Secret</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mu)">••••••••••••••••••••••••••••••••</td><td><span class="pill-g">Aktywny</span></td><td><button class="btn-g" onclick="toast('Skopiowano')">Kopiuj</button></td></tr>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const PANELS = {dashboard:'Dashboard',users:'Użytkownicy',revenue:'Przychody',logs:'Logi systemowe',emails:'Kampanie e-mail',releases:'Wersje / Release',settings:'Ustawienia systemu',api:'Klucze API',subscriptions:'Subskrypcje'};
+
+function nav(id) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('show'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('act'));
+  const p=document.getElementById('panel-'+id);
+  if(p)p.classList.add('show');
+  document.getElementById('page-title').textContent=PANELS[id]||id;
+  document.querySelectorAll('.ni').forEach(n=>{if(n.getAttribute('onclick')?.includes("'"+id+"'"))n.classList.add('act');});
+  if(id==='logs') renderLogs();
+}
+
+function toast(msg,type='ok'){const t=document.getElementById('toast');t.textContent=msg;t.style.borderColor=type==='err'?'rgba(239,68,68,.4)':'rgba(45,212,191,.4)';t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3000);}
+
+// Animate KPIs
+function animKPI(id,target,sfx=''){const el=document.getElementById(id);if(!el)return;let s=0;const go=ts=>{if(!go.t)go.t=ts;const p=Math.min((ts-go.t)/1600,1);const e=1-Math.pow(1-p,3);el.textContent=Math.floor(e*target).toLocaleString('pl-PL')+sfx;if(p<1)requestAnimationFrame(go);};requestAnimationFrame(go);}
+setTimeout(()=>{animKPI('k-mrr',24800,' zł');animKPI('k-users',824);animKPI('k-inv',14280);animKPI('k-ai',1842);document.getElementById('k-churn').textContent='2.1%';},300);
+
+// Time
+function tick(){document.getElementById('admin-time').textContent=new Date().toLocaleString('pl-PL',{weekday:'short',hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+tick();setInterval(tick,1000);
+
+// Logs
+function renderLogs(){
+  const logs=[
+    {t:'09:42:15',lv:'INFO', msg:'POST /api/auth.php?action=login · user#824 · IP: 91.xxx.xxx.12 · 200 OK'},
+    {t:'09:41:03',lv:'INFO', msg:'POST /api/ai.php?action=analyze · user#312 · file: umowa_najmu.pdf · 200 OK'},
+    {t:'09:38:55',lv:'INFO', msg:'POST /api/payments.php?action=create-checkout · user#156 · plan: pro · 200 OK'},
+    {t:'09:35:12',lv:'WARN', msg:'POST /api/ksef.php?action=send-invoice · invoice#41 · ERROR: nieprawidłowy NIP nabywcy'},
+    {t:'09:30:44',lv:'INFO', msg:'POST /api/webhook.php · Stripe event: checkout.session.completed · user#824'},
+    {t:'09:28:21',lv:'INFO', msg:'GET /api/invoices.php?action=list · user#001 · 47 records · 200 OK'},
+    {t:'09:15:09',lv:'ERROR',msg:'POST /api/auth.php?action=login · Failed login · IP: 185.xxx.xxx.99 · 401'},
+    {t:'09:10:33',lv:'INFO', msg:'Stripe webhook: invoice.payment_succeeded · user#389 · 499 zł'},
+    {t:'08:55:17',lv:'INFO', msg:'Database backup completed · Size: 842 MB · Duration: 4.2s'},
+    {t:'08:00:00',lv:'INFO', msg:'System health check · All services OK · Uptime: 99.97%'},
+  ];
+  const colors={INFO:'var(--green)',WARN:'var(--yellow)',ERROR:'var(--red)'};
+  document.getElementById('log-output').innerHTML=logs.map(l=>`<div><span style="color:var(--mu)">[${l.t}]</span> <span style="color:${colors[l.lv]}">[${l.lv}]</span> <span style="color:var(--mu)">${l.msg}</span></div>`).join('');
+}
+
+function publishRelease(){
+  const ver=document.getElementById('rel-ver').value.trim();
+  const notes=document.getElementById('rel-notes').value.trim();
+  if(!ver||!notes){toast('Uzupełnij wersję i opis zmian','err');return;}
+  toast(`🚀 Wersja ${ver} opublikowana!`);
+}
+
+function filterUsers(q){toast(q.length>2?'Szukam: "'+q+'"...':'');}
+function refreshData(){toast('🔄 Dane odświeżone');}
+</script>
+</body>
+</html>
