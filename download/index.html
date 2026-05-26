@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Velqora — Pobierz aplikację</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#05060a;--bg2:#080a10;--bg3:#0d1018;--a:#4f7fff;--a2:#7b5fff;--teal:#2dd4bf;--tx:#eef0f6;--mu:#5a6080;--br:rgba(79,127,255,.14)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;overflow-x:hidden}
+.mesh{position:fixed;inset:0;pointer-events:none;z-index:0}
+.blob{position:absolute;border-radius:50%;filter:blur(120px);animation:fl 10s ease-in-out infinite}
+.b1{width:700px;height:600px;background:rgba(79,127,255,.07);top:-200px;left:-200px}
+.b2{width:500px;height:500px;background:rgba(123,95,255,.06);bottom:-100px;right:-100px;animation-delay:-5s}
+@keyframes fl{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,-15px)}}
+nav{padding:20px 60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--br);position:relative;z-index:10}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.lm{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--a),var(--a2));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:#fff}
+.ln{font-family:'Syne',sans-serif;font-weight:700;font-size:19px;color:var(--tx)}
+.hero{text-align:center;padding:80px 24px 60px;position:relative;z-index:5}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(79,127,255,.1);border:1px solid rgba(79,127,255,.22);border-radius:30px;padding:6px 16px;font-size:12px;color:var(--a);margin-bottom:24px}
+h1{font-family:'Syne',sans-serif;font-size:clamp(36px,5vw,64px);font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:16px}
+h1 span{background:linear-gradient(135deg,var(--a),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sub{font-size:17px;color:var(--mu);max-width:480px;margin:0 auto 48px;line-height:1.7}
+
+.apps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:980px;margin:0 auto;padding:0 24px}
+.app-card{background:var(--bg3);border:1px solid var(--br);border-radius:20px;padding:36px 28px;transition:all .3s;position:relative;overflow:hidden}
+.app-card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--topline,linear-gradient(90deg,var(--a),var(--a2)))}
+.app-card:hover{transform:translateY(-5px);border-color:rgba(79,127,255,.3)}
+.app-icon{font-size:42px;margin-bottom:18px}
+.app-name{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--tx);margin-bottom:8px}
+.app-desc{font-size:14px;color:var(--mu);line-height:1.7;margin-bottom:24px}
+.app-info{display:flex;flex-direction:column;gap:6px;margin-bottom:24px}
+.app-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mu)}
+.app-row::before{content:"✓";color:var(--teal);font-size:11px}
+.dl-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border-radius:11px;font-size:14px;font-weight:600;text-decoration:none;transition:all .2s;letter-spacing:.02em;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;margin-bottom:8px}
+.dl-main{background:linear-gradient(135deg,var(--a),var(--a2));color:#fff}
+.dl-main:hover{opacity:.9;transform:translateY(-1px)}
+.dl-alt{background:rgba(255,255,255,.04);border:1px solid var(--br);color:var(--mu)}
+.dl-alt:hover{border-color:rgba(79,127,255,.3);color:var(--tx)}
+.ver{font-size:11px;color:var(--mu);text-align:center;margin-top:8px}
+
+/* PWA INSTALL */
+.pwa-banner{background:rgba(79,127,255,.08);border:1px solid rgba(79,127,255,.2);border-radius:14px;padding:20px 24px;max-width:980px;margin:32px auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap;display:none}
+.pwa-banner.show{display:flex}
+.pwa-txt{flex:1;font-size:14px;color:var(--mu);line-height:1.5}
+.pwa-btn{background:var(--a);color:#fff;border:none;padding:10px 22px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap}
+.pwa-btn:hover{opacity:.9}
+
+.feat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:980px;margin:48px auto 0;padding:0 24px}
+.feat{background:rgba(255,255,255,.02);border:1px solid var(--br);border-radius:12px;padding:20px;text-align:center}
+.feat-icon{font-size:24px;margin-bottom:10px}
+.feat-t{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--tx);margin-bottom:6px}
+.feat-d{font-size:12px;color:var(--mu);line-height:1.5}
+
+footer{padding:40px 60px;border-top:1px solid var(--br);text-align:center;margin-top:80px;position:relative;z-index:5}
+.ft{font-size:12px;color:var(--mu);line-height:2}
+.ft a{color:var(--a);text-decoration:none}
+
+@media(max-width:768px){
+  nav{padding:16px 20px}
+  .apps-grid{grid-template-columns:1fr;padding:0 16px}
+  .feat-grid{grid-template-columns:repeat(2,1fr);padding:0 16px}
+  footer{padding:32px 20px}
+}
+</style>
+</head>
+<body>
+<div class="mesh"><div class="blob b1"></div><div class="blob b2"></div></div>
+
+<nav>
+  <a class="logo" href="index.html"><div class="lm">V</div><span class="ln">Velqora</span></a>
+  <a href="login.html" style="background:var(--a);color:#fff;padding:9px 20px;border-radius:8px;font-size:13px;font-weight:500;text-decoration:none">Zaloguj się →</a>
+</nav>
+
+<div class="hero">
+  <div class="badge">📱 Dostępne na wszystkich platformach</div>
+  <h1>Velqora zawsze<br/>przy <span>Tobie</span></h1>
+  <p class="sub">Pobierz aplikację na swój komputer lub telefon. Dostęp do faktur, AI analizy i KSeF w każdym miejscu.</p>
+</div>
+
+<!-- PWA INSTALL BANNER -->
+<div class="pwa-banner" id="pwa-banner">
+  <div style="font-size:28px">📲</div>
+  <div class="pwa-txt"><strong style="color:var(--tx)">Zainstaluj Velqora na tym urządzeniu</strong><br/>Kliknij, aby dodać aplikację do ekranu głównego — działa jak natywna aplikacja!</div>
+  <button class="pwa-btn" id="pwa-install-btn">Zainstaluj aplikację</button>
+  <button onclick="document.getElementById('pwa-banner').classList.remove('show')" style="background:none;border:none;color:var(--mu);cursor:pointer;font-size:18px">×</button>
+</div>
+
+<!-- DOWNLOAD GRID -->
+<div class="apps-grid">
+
+  <!-- WINDOWS -->
+  <div class="app-card" style="--topline:linear-gradient(90deg,#0078d4,#00bcf2)">
+    <div class="app-icon">🪟</div>
+    <div class="app-name">Windows</div>
+    <div class="app-desc">Natywna aplikacja desktopowa dla Windows 10/11. Pełne wsparcie systemu i powiadomień.</div>
+    <div class="app-info">
+      <div class="app-row">Windows 10 / 11 (64-bit)</div>
+      <div class="app-row">Powiadomienia systemowe</div>
+      <div class="app-row">Skróty klawiszowe</div>
+      <div class="app-row">Ikonka w zasobniku</div>
+    </div>
+    <button class="dl-btn dl-main" onclick="downloadApp('windows-x64')">⬇ Pobierz dla Windows</button>
+    <button class="dl-btn dl-alt" onclick="downloadApp('windows-x32')">⬇ Wersja 32-bit</button>
+    <div class="ver">Wersja 1.0.0 · 85 MB · EXE Installer</div>
+  </div>
+
+  <!-- macOS -->
+  <div class="app-card" style="--topline:linear-gradient(90deg,#555,#999)">
+    <div class="app-icon">🍎</div>
+    <div class="app-name">macOS</div>
+    <div class="app-desc">Natywna aplikacja dla Mac. Obsługa Apple Silicon (M1/M2/M3) i Intel.</div>
+    <div class="app-info">
+      <div class="app-row">macOS 12 Monterey lub nowszy</div>
+      <div class="app-row">Apple Silicon (M1/M2/M3)</div>
+      <div class="app-row">Intel x64</div>
+      <div class="app-row">Touch Bar support</div>
+    </div>
+    <button class="dl-btn dl-main" onclick="downloadApp('mac-arm')">⬇ Mac Apple Silicon</button>
+    <button class="dl-btn dl-alt" onclick="downloadApp('mac-intel')">⬇ Mac Intel</button>
+    <div class="ver">Wersja 1.0.0 · 92 MB · DMG</div>
+  </div>
+
+  <!-- LINUX -->
+  <div class="app-card" style="--topline:linear-gradient(90deg,#f97316,#eab308)">
+    <div class="app-icon">🐧</div>
+    <div class="app-name">Linux</div>
+    <div class="app-desc">Dostępny jako AppImage, .deb (Ubuntu/Debian) oraz .rpm (Fedora/RHEL).</div>
+    <div class="app-info">
+      <div class="app-row">Ubuntu 20.04+</div>
+      <div class="app-row">Fedora 36+</div>
+      <div class="app-row">Arch Linux</div>
+      <div class="app-row">AppImage (universal)</div>
+    </div>
+    <button class="dl-btn dl-main" onclick="downloadApp('linux-appimage')">⬇ AppImage (universal)</button>
+    <button class="dl-btn dl-alt" onclick="downloadApp('linux-deb')">⬇ .deb (Ubuntu)</button>
+    <div class="ver">Wersja 1.0.0 · 78 MB</div>
+  </div>
+
+  <!-- ANDROID -->
+  <div class="app-card" style="--topline:linear-gradient(90deg,#3ddc84,#22c55e)">
+    <div class="app-icon">🤖</div>
+    <div class="app-name">Android</div>
+    <div class="app-desc">Pełnowartościowa aplikacja natywna. Dostępna w Google Play lub jako APK.</div>
+    <div class="app-info">
+      <div class="app-row">Android 8.0 (API 26) lub nowszy</div>
+      <div class="app-row">Push notifications</div>
+      <div class="app-row">Biometryczne logowanie</div>
+      <div class="app-row">Tryb offline</div>
+    </div>
+    <button class="dl-btn dl-main" style="background:linear-gradient(135deg,#3ddc84,#0d9748)" onclick="openStore('android')">▶ Google Play</button>
+    <button class="dl-btn dl-alt" onclick="downloadApp('android-apk')">⬇ Pobierz APK</button>
+    <div class="ver">Wersja 1.0.0 · 42 MB</div>
+  </div>
+
+  <!-- iOS -->
+  <div class="app-card" style="--topline:linear-gradient(90deg,#007aff,#5856d6)">
+    <div class="app-icon">📱</div>
+    <div class="app-name">iPhone / iPad</div>
+    <div class="app-desc">Natywna aplikacja iOS dla iPhone i iPad. Face ID / Touch ID.</div>
+    <div class="app-info">
+      <div class="app-row">iOS 15 lub nowszy</div>
+      <div class="app-row">Face ID / Touch ID</div>
+      <div class="app-row">iPad z pełnym widokiem</div>
+      <div class="app-row">Widgets na ekranie głównym</div>
+    </div>
+    <button class="dl-btn dl-main" style="background:linear-gradient(135deg,#007aff,#5856d6)" onclick="openStore('ios')"> App Store</button>
+    <div class="ver">Wersja 1.0.0 · 38 MB</div>
+  </div>
+
+  <!-- PWA -->
+  <div class="app-card" style="--topline:linear-gradient(90deg,var(--teal),var(--a))">
+    <div class="app-icon">🌐</div>
+    <div class="app-name">Web App (PWA)</div>
+    <div class="app-desc">Zainstaluj bezpośrednio z przeglądarki — działa na każdym urządzeniu. Bez app store.</div>
+    <div class="app-info">
+      <div class="app-row">Każdy system operacyjny</div>
+      <div class="app-row">Chrome, Edge, Safari, Firefox</div>
+      <div class="app-row">Tryb offline</div>
+      <div class="app-row">Push notifications</div>
+    </div>
+    <button class="dl-btn dl-main" id="pwa-btn" onclick="installPWA()">📲 Zainstaluj jako aplikację</button>
+    <button class="dl-btn dl-alt" onclick="window.location.href='dashboard.html'">🌐 Otwórz w przeglądarce</button>
+    <div class="ver">Zawsze aktualna · 0 MB do pobrania</div>
+  </div>
+
+</div>
+
+<!-- FEATURES -->
+<div class="feat-grid">
+  <div class="feat"><div class="feat-icon">🔄</div><div class="feat-t">Synchronizacja</div><div class="feat-d">Dane synchronizują się w czasie rzeczywistym między wszystkimi urządzeniami</div></div>
+  <div class="feat"><div class="feat-icon">🔒</div><div class="feat-t">Bezpieczeństwo</div><div class="feat-d">Szyfrowanie end-to-end. Dane chronione RODO na serwerach w Polsce</div></div>
+  <div class="feat"><div class="feat-icon">📶</div><div class="feat-t">Tryb offline</div><div class="feat-d">Podstawowe funkcje działają bez internetu. Sync przy powrocie online</div></div>
+  <div class="feat"><div class="feat-icon">🔔</div><div class="feat-t">Powiadomienia</div><div class="feat-d">Alerty o płatnościach, terminach VAT i ważnych zdarzeniach</div></div>
+</div>
+
+<footer>
+  <div class="ft">
+    © 2026 Velqora Sp. z o.o. · <a href="index.html">Strona główna</a> · <a href="login.html">Logowanie</a><br/>
+    Masz pytania? <a href="mailto:kontakt@velqora.pl">kontakt@velqora.pl</a>
+  </div>
+</footer>
+
+<script>
+let deferredPrompt = null;
+
+// Przechwytuj zdarzenie instalacji PWA
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('pwa-banner').classList.add('show');
+});
+
+function installPWA() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(choice => {
+      if (choice.outcome === 'accepted') {
+        document.getElementById('pwa-banner').classList.remove('show');
+        document.getElementById('pwa-btn').textContent = '✅ Zainstalowano!';
+      }
+      deferredPrompt = null;
+    });
+  } else {
+    // iOS — instrukcja
+    alert('Na iPhone:\n1. Otwórz velqora.pl w Safari\n2. Kliknij ikonę Udostępnij (kwadrat ze strzałką)\n3. Wybierz "Dodaj do ekranu głównego"');
+  }
+}
+
+function downloadApp(platform) {
+  const urls = {
+    'windows-x64':     'https://velqora.pl/releases/Velqora-Setup-1.0.0-x64.exe',
+    'windows-x32':     'https://velqora.pl/releases/Velqora-Setup-1.0.0-ia32.exe',
+    'mac-arm':         'https://velqora.pl/releases/Velqora-1.0.0-arm64.dmg',
+    'mac-intel':       'https://velqora.pl/releases/Velqora-1.0.0-x64.dmg',
+    'linux-appimage':  'https://velqora.pl/releases/Velqora-1.0.0.AppImage',
+    'linux-deb':       'https://velqora.pl/releases/velqora_1.0.0_amd64.deb',
+    'android-apk':     'https://velqora.pl/releases/velqora-1.0.0.apk',
+  };
+  const url = urls[platform];
+  if (url) {
+    window.location.href = url;
+  } else {
+    alert('Pobieranie wkrótce dostępne!');
+  }
+}
+
+function openStore(platform) {
+  if (platform === 'android') {
+    window.open('https://play.google.com/store/apps/details?id=pl.velqora.app', '_blank');
+  } else {
+    window.open('https://apps.apple.com/pl/app/velqora/id0000000000', '_blank');
+  }
+}
+
+// Rejestracja Service Worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(reg => {
+    console.log('SW zarejestrowany:', reg.scope);
+  }).catch(err => console.log('SW błąd:', err));
+}
+</script>
+</body>
+</html>
